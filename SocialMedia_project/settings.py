@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'ReachOut2Me.apps.Reachout2MeConfig', # new
-    'ReachOut2Me'
+    #'ReachOut2Me'
 ]
 
 MIDDLEWARE = [

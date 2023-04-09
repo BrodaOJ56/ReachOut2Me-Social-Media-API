@@ -64,3 +64,12 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return f'{self.sender} -> {self.recipient}'
+    
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    avatar = models.ImageField(blank=True, upload_to='avatars/')
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"
