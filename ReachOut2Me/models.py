@@ -18,6 +18,9 @@ class Post(models.Model):
     # the users who liked the post
     likes = models.ManyToManyField(User, related_name='post_likes', blank=True)
 
+    class Meta:
+        app_label = 'ReachOut2Me'
+
     def __str__(self):
         return self.title
 
@@ -34,6 +37,9 @@ class Comment(models.Model):
     # the time the comment was last updated
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        app_label = 'ReachOut2Me'
+
     def __str__(self):
         return self.content
 
@@ -47,6 +53,9 @@ class Message(models.Model):
     content = models.TextField()
     # the time the message was sent
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'ReachOut2Me'
 
     def __str__(self):
         return self.content
@@ -62,6 +71,9 @@ class FriendRequest(models.Model):
     # the time the friend request was sent
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        app_label = 'ReachOut2Me'
+
     def __str__(self):
         return f'{self.sender} -> {self.recipient}'
     
@@ -70,6 +82,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     avatar = models.ImageField(blank=True, upload_to='avatars/')
+
+    class Meta:
+        app_label = 'ReachOut2Me'
 
     def __str__(self):
         return f"{self.user.username}'s profile"
