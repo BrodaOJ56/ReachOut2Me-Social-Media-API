@@ -82,6 +82,11 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     avatar = models.ImageField(blank=True, upload_to='avatars/')
+    gender = models.CharField(max_length=10, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    state_or_city = models.CharField(max_length=100, blank=True)
+    telephone_number = models.CharField(max_length=20, blank=True)
 
     class Meta:
         app_label = 'ReachOut2Me'

@@ -25,3 +25,15 @@ class GetAllUsers(APIView):
                 'bio': user.userprofile.bio if hasattr(user, 'userprofile') else 'No bio available',
             })
         return Response(all_users, status=status.HTTP_200_OK)
+    
+    
+#Endpoint to register as a new user
+class RegisterUser(APIView):
+    def post(self, request):
+        data = request.data
+        required_fields = ['username', 'password', 'first_name', 'last_name', 'email']
+        if not all(field in data for field in required_fields):
+            return Response({'error': 'Username, password, first name, last name, and email are required.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.create_user(**data)
+        return Response({'success': f'User {user.username} registered.'}, status=status.HTTP_201_CREATED)
