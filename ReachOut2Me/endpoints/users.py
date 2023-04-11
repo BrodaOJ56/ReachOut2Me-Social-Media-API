@@ -35,5 +35,9 @@ class RegisterUser(APIView):
         if not all(field in data for field in required_fields):
             return Response({'error': 'Username, password, first name, last name, and email are required.'},
                             status=status.HTTP_400_BAD_REQUEST)
+        
+        #convert input to lowercase before saving to the database
+        data['username'] = data['username'].lower()
+        data['email'] = data['email'].lower()
         user = User.objects.create_user(**data)
         return Response({'success': f'User {user.username} registered.'}, status=status.HTTP_201_CREATED)
