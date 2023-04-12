@@ -25,9 +25,9 @@ class GetAllUsers(APIView):
                 'bio': user.userprofile.bio if hasattr(user, 'userprofile') else 'No bio available',
             })
         return Response(all_users, status=status.HTTP_200_OK)
-    
-    
-#Endpoint to register as a new user
+
+
+# Endpoint to register as a new user
 class RegisterUser(APIView):
     def post(self, request):
         data = request.data
