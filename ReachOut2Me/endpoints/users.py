@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import UserProfileSerializer
+from ..utils import validate_email
 
 
 # Just testing out the APIView for the get all users endpoint
@@ -23,6 +24,7 @@ class GetAllUsers(APIView):
                 'is_superuser': user.is_superuser,
                 'date_joined': user.date_joined,
                 'last_login': user.last_login,
+                'avatar': user.userprofile.avatar.url if hasattr(user, 'userprofile') else 'No avatar available',
                 'bio': user.userprofile.bio if hasattr(user, 'userprofile') else 'No bio available',
             })
         return Response(all_users, status=status.HTTP_200_OK)
@@ -36,9 +38,19 @@ class RegisterUser(APIView):
         if not all(field in data for field in required_fields):
             return Response({'error': 'Username, password, first name, last name, and email are required.'},
                             status=status.HTTP_400_BAD_REQUEST)
+        username_exist = User.objects.filter(username=data['username'].lower()).exists()
+        email_exist = User.objects.filter(email=data['email'].lower()).exists()
+        if username_exist:
+            return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        if email_exist:
+            return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not validate_email(data['email'].lower()):
+            return Response({'error': 'Email is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
         # convert input to lowercase before saving to the database
         data['username'] = data['username'].lower()
         data['email'] = data['email'].lower()
+        data['first_name'] = data['first_name'].lower()
+        data['last_name'] = data['last_name'].lower()
         user = User.objects.create_user(**data)
         return Response({'success': f'User {user.username} registered.'}, status=status.HTTP_201_CREATED)
 
