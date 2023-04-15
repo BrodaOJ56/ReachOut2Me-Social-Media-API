@@ -15,7 +15,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name='post_likes', blank=True)
 
     class Meta:
-        app_label = 'Post'
+        app_label = 'ReachOut2Me'
 
     def __str__(self):
         return f"{self.author.username}'s post: {self.content}"
