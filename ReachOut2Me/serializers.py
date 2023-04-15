@@ -10,10 +10,24 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    image = serializers.ImageField(required=False, use_url=True)
     
     class Meta:
         fields = '__all__'
         model = Comment
+    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        image = request.FILES.get('image')
+        validated_data.pop('image', None)  # remove the 'image' key from validated_data
+        comment = Comment.objects.create(
+            author=request.user,
+            image=image,
+            **validated_data
+    )
+        return comment
+
 
 
 class MessageSerializer(serializers.ModelSerializer):
