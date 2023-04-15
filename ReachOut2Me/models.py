@@ -26,6 +26,7 @@ class Post(models.Model):
 class Comment(models.Model):
     # the comment itself
     content = models.TextField()
+    image = models.ImageField(upload_to='comment_images/', null=True, blank=True)
     # the user who wrote the comment
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # the post that the comment is on
@@ -49,6 +50,7 @@ class Message(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     # the content of the message
     content = models.TextField()
+    image = models.ImageField(upload_to='message_images/', null=True, blank=True)
     # the time the message was sent
     created_at = models.DateTimeField(auto_now_add=True)
 

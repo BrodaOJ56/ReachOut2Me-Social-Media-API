@@ -1,6 +1,6 @@
 from .endpoints.users import *
 from django.urls import path
-from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView
+from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateComment
 
 urlpatterns = [
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
@@ -15,4 +15,6 @@ urlpatterns = [
     path('posts/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     #allows users to retrieve a single post and like/unlike post using POST method
     path('posts/<int:pk>/like/', PostLikeView.as_view(), name='post_like'),
+    #allows users to create comment on a post
+    path('posts/<int:post_id>/comments/', CreateComment.as_view(), name='create-comment'),
 ]
