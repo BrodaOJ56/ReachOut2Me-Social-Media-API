@@ -3,10 +3,8 @@ from django.contrib.auth.models import User
 
 
 class Post(models.Model):
-    # the title of the post
-    title = models.CharField(max_length=200)
     # the content of the post
-    content = models.TextField()
+    content = models.CharField(max_length=280)
     # the image of the post
     image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     # the user who wrote the post
@@ -22,7 +20,7 @@ class Post(models.Model):
         app_label = 'ReachOut2Me'
 
     def __str__(self):
-        return self.title
+        return f"{self.author.username}'s post: {self.content}"
 
 
 class Comment(models.Model):
