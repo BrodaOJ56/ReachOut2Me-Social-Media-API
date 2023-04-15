@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 class Post(models.Model):
     # the content of the post
     content = models.CharField(max_length=280)
+    # the image of the post
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     # the user who wrote the post
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # the time the post was created
