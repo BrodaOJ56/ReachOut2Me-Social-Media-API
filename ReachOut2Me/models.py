@@ -3,12 +3,8 @@ from django.contrib.auth.models import User
 
 
 class Post(models.Model):
-    # the title of the post
-    title = models.CharField(max_length=200)
     # the content of the post
-    content = models.TextField()
-    # the image of the post
-    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
+    content = models.CharField(max_length=280)
     # the user who wrote the post
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # the time the post was created
@@ -19,10 +15,10 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name='post_likes', blank=True)
 
     class Meta:
-        app_label = 'ReachOut2Me'
+        app_label = 'Post'
 
     def __str__(self):
-        return self.title
+        return f"{self.author.username}'s post: {self.content}"
 
 
 class Comment(models.Model):
