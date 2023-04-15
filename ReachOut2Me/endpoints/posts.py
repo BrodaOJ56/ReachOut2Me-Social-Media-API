@@ -56,6 +56,7 @@ class PostLikeView(generics.GenericAPIView):
 
 
 class CreateComment(APIView):
+    pass
 
 
 class CreateGetComment(APIView):
@@ -103,7 +104,6 @@ class UpdateDeleteComment(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def delete(self, request, post_id, comment_id):
         try:
