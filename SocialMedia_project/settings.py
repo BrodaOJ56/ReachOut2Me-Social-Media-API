@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
 
     'ReachOut2Me.apps.Reachout2MeConfig', # new
     #'ReachOut2Me'
