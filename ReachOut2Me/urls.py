@@ -22,4 +22,6 @@ urlpatterns = [
     path('posts/<int:post_id>/comments/<int:comment_id>/', UpdateDeleteComment.as_view(), name='update-comment'),
     # allows users to login
     path('login/', LoginView.as_view(), name='login_user'),
+    # get current user
+    path('my_account/', GetUserProfile.as_view(), name='get_user_profile'),
 ]

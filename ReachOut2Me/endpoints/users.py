@@ -19,6 +19,13 @@ class GetAllUsers(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class GetUserProfile(APIView):
+    def get(self, request):
+        users = UserProfile.objects.filter(user=request.user).first()
+        serializer = UserProfile_Serializer(users)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserProfileView(APIView):
     def get(self, request):
         user_profile = UserProfile.objects.filter(user=request.user).first()
