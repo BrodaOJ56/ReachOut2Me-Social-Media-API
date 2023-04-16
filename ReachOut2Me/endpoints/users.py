@@ -1,8 +1,12 @@
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from ..models import User, UserProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..serializers import UserProfileSerializer, UploadAvatarSerializer, UserProfile_Serializer
+from ..serializers import UserProfileSerializer, \
+    UploadAvatarSerializer, UserProfile_Serializer
 from ..utils import validate_email
 
 
@@ -63,6 +67,23 @@ class RegisterUser(APIView):
         user = User.objects.create_user(**data)
         UserProfile.objects.create(user=user)
         return Response({'success': f'User {user.username} registered.'}, status=status.HTTP_201_CREATED)
+
+
+class LoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        # convert the username to lowercase
+        request.data['username'] = request.data['username'].lower()
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
 
 
 class UserProfileView(APIView):
