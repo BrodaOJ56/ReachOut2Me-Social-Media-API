@@ -1,6 +1,8 @@
 from ..models import User, UserProfile
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from ..serializers import UserProfileSerializer, \
     UploadAvatarSerializer, UserProfile_Serializer
@@ -8,6 +10,9 @@ from ..serializers import UserProfileSerializer, \
 
 # Just testing out the APIView for the get all users endpoint
 class GetAllUsers(APIView):
+    # authentication_classes = [TokenAuthentication]
+    permission_classes = [AllowAny]
+
     def get(self, request):
         # users = User.objects.select_related('userprofile').all()
         users = UserProfile.objects.all()
