@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import User, UserProfile
-from ..utils import validate_email
+from ..utils import validate_email, validate_password
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 
@@ -23,6 +23,13 @@ class RegisterUser(APIView):
             return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
         if not validate_email(data['email'].lower()):
             return Response({'error': 'Email is invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not validate_password(data['password']):
+            return Response({'error 1': 'Password must be at least 8 characters long.',
+                            'error 2': 'Password must contain at least one uppercase letter.',
+                             'error 3': 'Password must contain at least one lowercase letter.',
+                             'error 4': 'Password must contain at least one number.',
+                             'error 5': 'Password must not contain spaces.'
+                             }, status=status.HTTP_400_BAD_REQUEST)
         # convert input to lowercase before saving to the database
         data['username'] = data['username'].lower()
         data['email'] = data['email'].lower()
