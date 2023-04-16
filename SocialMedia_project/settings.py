@@ -45,12 +45,24 @@ INSTALLED_APPS = [
     #'ReachOut2Me'
 ]
 
-REST_FRAMEWORK = {
-'DEFAULT_PERMISSION_CLASSES': [
-'rest_framework.permissions.AllowAny',
-]
+# REST_FRAMEWORK = {
+# 'DEFAULT_PERMISSION_CLASSES': [
+# 'rest_framework.permissions.AllowAny',
+# ]
+#
+# }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        # other authentication classes go here, if needed
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        # other permission classes go here, if needed
+    ],
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
