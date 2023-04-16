@@ -1,4 +1,5 @@
 from .endpoints.users import *
+from .endpoints.auth import *
 from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment
 
