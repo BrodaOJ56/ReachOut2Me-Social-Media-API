@@ -1,9 +1,8 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, FriendRequest,  UserProfile, User
+from .models import Post, Comment, Message, FriendRequest, UserProfile, User
 
 
 class PostSerializer(serializers.ModelSerializer):
-    
     class Meta:
         fields = '__all__'
         model = Post
@@ -12,11 +11,11 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     image = serializers.ImageField(required=False, use_url=True)
-    
+
     class Meta:
         fields = '__all__'
         model = Comment
-    
+
     def create(self, validated_data):
         request = self.context.get('request')
         image = request.FILES.get('image')
@@ -25,20 +24,17 @@ class CommentSerializer(serializers.ModelSerializer):
             author=request.user,
             image=image,
             **validated_data
-    )
+        )
         return comment
 
 
-
 class MessageSerializer(serializers.ModelSerializer):
-    
     class Meta:
         fields = '__all__'
         model = Message
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    
     class Meta:
         fields = '__all__'
         model = FriendRequest
