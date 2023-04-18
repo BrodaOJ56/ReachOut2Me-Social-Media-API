@@ -3,6 +3,7 @@ from ..models import Post, Comment
 from rest_framework.response import Response
 from ..serializers import PostSerializer, CommentSerializer
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 
 class PostListCreateView(generics.ListCreateAPIView):
@@ -118,3 +119,16 @@ class UpdateDeleteComment(APIView):
 
         comment.delete()
         return Response({'message': 'Comment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+    
+class CommentLike(APIView):
+    def post(self, request, comment_id):
+        comment = get_object_or_404(Comment, id=comment_id)
+        comment.likes.add(request.user)
+        return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_200_OK)
+
+    def delete(self, request, comment_id):
+        comment = get_object_or_404(Comment, id=comment_id)
+        comment.likes.remove(request.user)
+        return Response({'message': 'Comment unliked successfully.'}, status=status.HTTP_200_OK)
