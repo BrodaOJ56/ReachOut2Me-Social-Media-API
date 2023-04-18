@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'dj_rest_auth',
 
     'ReachOut2Me.apps.Reachout2MeConfig', # new
     #'ReachOut2Me'
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         # other authentication classes go here, if needed
     ],
     'DEFAULT_PERMISSION_CLASSES': [

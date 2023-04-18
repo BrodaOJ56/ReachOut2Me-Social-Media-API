@@ -31,6 +31,8 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # the post that the comment is on
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+     # Allow users to like a comment
+    likes = models.ManyToManyField(User, related_name='comment_likes', blank=True)
     # the time the comment was created
     created_at = models.DateTimeField(auto_now_add=True)
     # the time the comment was last updated
