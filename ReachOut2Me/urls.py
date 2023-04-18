@@ -24,4 +24,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login_user'),
     # get current user
     path('my_account/', GetUserProfile.as_view(), name='get_user_profile'),
+    # logout user
+    path('logout/', LogoutView.as_view(), name='logout_user'),
 ]
