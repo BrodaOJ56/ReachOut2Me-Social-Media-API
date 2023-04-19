@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, FriendRequest, UserProfile, User
+from .models import Post, Comment, Message, FriendRequest, UserProfile, User, CommentReply
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -26,6 +26,11 @@ class CommentSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return comment
+    
+class CommentReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = CommentReply
 
 
 class MessageSerializer(serializers.ModelSerializer):
