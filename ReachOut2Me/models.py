@@ -43,7 +43,20 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+    
 
+class CommentReply(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='commentreplies')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reply = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'ReachOut2Me'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Reply by {self.user.username} to {self.comment}'
 
 class Message(models.Model):
     # the sender of the message

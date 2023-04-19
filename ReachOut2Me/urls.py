@@ -1,7 +1,7 @@
 from .endpoints.users import *
 from .endpoints.auth import *
 from django.urls import path
-from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike
+from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply
 
 urlpatterns = [
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
@@ -22,6 +22,10 @@ urlpatterns = [
     path('posts/<int:post_id>/comments/<int:comment_id>/', UpdateDeleteComment.as_view(), name='update-comment'),
     # allows users to like/unlike comment by ID
     path('comments/<int:comment_id>/like/', CommentLike.as_view(), name='comment_like'),
+    # allows users to reply a comment and view all comment replies
+    path('comments/<int:comment_id>/replies/', ListCreateCommentReply.as_view(), name='create_get_comment_reply'),
+    # allows users to update and delete reply
+    path('comments/<int:comment_id>/replies/<int:reply_id>/', UpdateDeleteCommentReply.as_view(), name='create_get_comment_reply'),
     # allows users to login
     path('login/', LoginView.as_view(), name='login_user'),
     # get current user

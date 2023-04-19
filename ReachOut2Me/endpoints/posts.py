@@ -1,7 +1,7 @@
 from rest_framework import generics, status
-from ..models import Post, Comment
+from ..models import Post, Comment, CommentReply
 from rest_framework.response import Response
-from ..serializers import PostSerializer, CommentSerializer
+from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
@@ -121,6 +121,66 @@ class UpdateDeleteComment(APIView):
         return Response({'message': 'Comment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
     
 
+
+class ListCreateCommentReply(APIView):
+    serializer_class = CommentReplySerializer
+
+    def post(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(comment=comment, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    def get(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        replies = CommentReply.objects.filter(comment=comment)
+        serializer = self.serializer_class(replies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UpdateDeleteCommentReply(APIView):
+    serializer_class = CommentReplySerializer
+
+    def put(self, request, comment_id, reply_id):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            reply = CommentReply.objects.get(id=reply_id, comment=comment)
+        except CommentReply.DoesNotExist:
+            return Response({'error': 'Comment reply not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(reply, data=request.data, context={'request': request, 'comment_id': comment_id})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, comment_id, reply_id):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            reply = CommentReply.objects.get(id=reply_id, comment=comment)
+        except CommentReply.DoesNotExist:
+            return Response({'error': 'Comment reply not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        reply.delete()
+        return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
     
 class CommentLike(APIView):
     def post(self, request, comment_id):
