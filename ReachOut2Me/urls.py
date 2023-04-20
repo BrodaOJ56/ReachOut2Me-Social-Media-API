@@ -32,5 +32,5 @@ urlpatterns = [
     path('my_account/', GetUserProfile.as_view(), name='get_user_profile'),
     # logout user
     path('logout/', LogoutView.as_view(), name='logout_user'),
-    path('search/<string:username>/', SearchUserView.as_view(), name='search_user'),
+    path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
 ]
