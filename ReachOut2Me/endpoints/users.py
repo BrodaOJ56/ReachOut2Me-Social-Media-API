@@ -69,4 +69,9 @@ class UploadAvatarView(APIView):
 
 
 class SearchUserView(APIView):
-    def get(self):
+    def get(self, username):
+        serializer = UserProfile_Serializer
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
