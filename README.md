@@ -14,7 +14,7 @@ Install the required packages using ```pip install -r requirements.txt```.
 Run the migrations using ```python manage.py migrate```.
 Start the development server using ```python manage.py runserver```.
 
-### Usage
+### Usage (Still under development)
 Once the development server is running, you can access the application in your web browser by visiting ```http://localhost:8000/```.
 
 ### Authentication
