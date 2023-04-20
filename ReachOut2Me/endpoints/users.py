@@ -75,7 +75,11 @@ class SearchUserView(APIView):
         user = User.objects.filter(username=username).first()
         # if user is not found, return a 404 error
         if not user:
-            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': 'User with that username not found.',
+                 'message': 'Please check the username and try again.'
+                 },
+                status=status.HTTP_404_NOT_FOUND)
         # serializer
         serializer = UserProfile_Serializer(user)
         # if user is found, return the user
