@@ -5,7 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from ..serializers import UserProfileSerializer, \
-    UploadAvatarSerializer, UserProfile_Serializer
+    UploadAvatarSerializer, UserProfile_Serializer, UserSerializer
 
 
 # Just testing out the APIView for the get all users endpoint
@@ -70,7 +70,7 @@ class UploadAvatarView(APIView):
 
 # search by username
 class SearchUserView(APIView):
-    def get(self, username):
+    def get(self, request, username):
         # query the database and get the user by username
         user = User.objects.filter(username=username).first()
         # if user is not found, return a 404 error
@@ -80,7 +80,8 @@ class SearchUserView(APIView):
                  'message': 'Please check the username and try again.'
                  },
                 status=status.HTTP_404_NOT_FOUND)
+        exact_user = UserProfile.objects.filter(user=user).first()
         # serializer
-        serializer = UserProfile_Serializer(user)
+        serializer = UserProfile_Serializer(exact_user)
         # if user is found, return the user
         return Response(serializer.data, status=status.HTTP_200_OK)
