@@ -70,7 +70,7 @@ class UploadAvatarView(APIView):
 
 # search by username
 class SearchUserView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
 
     def get(self, request, username):
         # query the database and get the user by username
