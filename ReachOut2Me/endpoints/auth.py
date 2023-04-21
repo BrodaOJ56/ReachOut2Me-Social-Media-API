@@ -5,10 +5,13 @@ from ..models import User, UserProfile
 from ..utils import validate_email, validate_password
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import AllowAny
 
 
 # Endpoint to register as a new user
 class RegisterUser(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         data = request.data
         required_fields = ['username', 'password', 'first_name', 'last_name', 'email']
