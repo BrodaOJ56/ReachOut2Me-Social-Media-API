@@ -42,6 +42,15 @@ class UserProfileView(APIView):
 
         serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
         if serializer.is_valid():
+            serializer.validated_data['gender'] = serializer.validated_data['gender'].lower()
+            serializer.validated_data['bio'] = serializer.validated_data['bio'].lower()
+            serializer.validated_data['country'] = serializer.validated_data['country'].lower()
+            serializer.validated_data['state_or_city'] = serializer.validated_data['state_or_city'].lower()
+
+            if serializer.validated_data['gender']:
+                # serializer.validated_data['gender'] = serializer.validated_data['gender'].lower()
+                if serializer.validated_data['gender'] not in ['male', 'female']:
+                    return Response({'error': 'Gender must be male or female.'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
             return Response(serializer.data)
         else:
