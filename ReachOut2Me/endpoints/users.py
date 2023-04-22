@@ -40,7 +40,7 @@ class UserProfileView(APIView):
         if not user_profile:
             return Response({'error': 'User profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = UserProfileSerializer(user_profile, data=request.data)
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
