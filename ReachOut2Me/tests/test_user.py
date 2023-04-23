@@ -6,10 +6,8 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 
-# Create your tests here.
 class UserTestCase(TestCase):
     """This class defines the test suite for the post model."""
-
     def setUp(self):
         self.url = reverse('get_all_users')
         """Define the test client and other test variables."""
