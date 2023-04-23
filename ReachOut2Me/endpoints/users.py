@@ -39,8 +39,19 @@ class UserProfileView(APIView):
         user_profile = UserProfile.objects.filter(user=request.user).first()
         if not user_profile:
             return Response({'error': 'User profile not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+        if request.data:
+            data = {}
+            for key, value in request.data.items():
+                if key == 'date_of_birth':
+                    data[key] = value
+                else:
+                    data[key] = value.strip().lower()
+            if 'telephone_number' in data:
+                if data['telephone_number'] and not data['telephone_number'].isdigit():
+                    return Response({'error': 'Telephone number must be a number.'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = UserProfileSerializer(user_profile, data=data, partial=True)
+        else:
+            serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
