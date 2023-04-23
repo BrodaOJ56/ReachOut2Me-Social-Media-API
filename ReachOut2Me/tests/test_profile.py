@@ -7,7 +7,7 @@ from ..models import UserProfile
 from rest_framework.authtoken.models import Token
 
 
-class UserTestCase(TestCase):
+class ProfileTestCase(TestCase):
     """This class defines the test suite for the post model."""
 
     def setUp(self):
