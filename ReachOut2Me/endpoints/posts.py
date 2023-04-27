@@ -20,7 +20,17 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         instance.delete()
-        
+
+    def put(self, request, *args, **kwargs):
+        post = Post.objects.get(id=kwargs['pk'])
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            if request.user == post.author:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'You are not the author of this post.'}, status=status.HTTP_403_FORBIDDEN)
+
 
 # the class below is used to like/unlike a post
 # the generic.GenericAPIView class is used to create a custom view
@@ -119,7 +129,6 @@ class UpdateDeleteComment(APIView):
 
         comment.delete()
         return Response({'message': 'Comment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-    
 
 
 class ListCreateCommentReply(APIView):
@@ -136,7 +145,6 @@ class ListCreateCommentReply(APIView):
             serializer.save(comment=comment, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def get(self, request, comment_id):
         try:
@@ -147,6 +155,7 @@ class ListCreateCommentReply(APIView):
         replies = CommentReply.objects.filter(comment=comment)
         serializer = self.serializer_class(replies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UpdateDeleteCommentReply(APIView):
     serializer_class = CommentReplySerializer
@@ -181,7 +190,8 @@ class UpdateDeleteCommentReply(APIView):
 
         reply.delete()
         return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class CommentLike(APIView):
     def post(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id)
