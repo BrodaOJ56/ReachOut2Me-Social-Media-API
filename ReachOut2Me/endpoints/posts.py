@@ -20,7 +20,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         instance.delete()
-        
+
 
 # the class below is used to like/unlike a post
 # the generic.GenericAPIView class is used to create a custom view
