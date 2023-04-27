@@ -3,7 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth.models import User
-from ..models import UserProfile, Post, Comment
+from ..models import Post, Comment
 from rest_framework.authtoken.models import Token
 
 
@@ -49,3 +49,15 @@ class CommentTestCase(TestCase):
         self.assertEqual(response.data[0]["author"], self.user2.username)
         self.assertEqual(response.data[0]["post"], self.post.id)
 
+    def test_create_comment_on_a_post(self):
+        """Test the api can create comment on a post."""
+        data = {
+            "content": "test comment 2",
+            "author": self.user2.username,
+            "post": self.post.id
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["content"], "test comment 2")
+        self.assertEqual(response.data["author"], self.user2.username)
+        self.assertEqual(response.data["post"], self.post.id)
