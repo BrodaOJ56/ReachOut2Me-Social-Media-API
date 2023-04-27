@@ -38,11 +38,11 @@ class ProfileTestCase(TestCase):
     def test_update_user_profile(self):
         """Test the api can update user profile."""
         response = self.client.put(self.url, data={"bio": "test bio",
-                                                   "country": "test country",
+                                                   "country": "france",
                                                    })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['bio'], 'test bio')
-        self.assertEqual(response.data['country'], 'test country')
+        self.assertEqual(response.data['country'], 'france')
         self.assertEqual(response.data['user'], self.user.id)
 
     def test_get_user_account(self):
