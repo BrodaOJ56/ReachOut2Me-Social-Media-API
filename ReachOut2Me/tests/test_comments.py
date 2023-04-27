@@ -61,3 +61,17 @@ class CommentTestCase(TestCase):
         self.assertEqual(response.data["content"], "test comment 2")
         self.assertEqual(response.data["author"], self.user2.username)
         self.assertEqual(response.data["post"], self.post.id)
+
+    def test_update_a_comment_on_a_post(self):
+        """Test the api can update a comment on a post."""
+        url = reverse("update-comment", kwargs={"post_id": self.post.id, "comment_id": self.comment.id})
+        data = {
+            "content": "test comment updated",
+            "author": self.user2.username,
+            "post": self.post.id
+        }
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["content"], "test comment updated")
+        self.assertEqual(response.data["author"], self.user2.username)
+        self.assertEqual(response.data["post"], self.post.id)
