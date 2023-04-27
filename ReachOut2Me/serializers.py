@@ -3,6 +3,8 @@ from .models import Post, Comment, Message, FriendRequest, UserProfile, User, Co
 
 
 class PostSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(required=False)
+
     class Meta:
         fields = '__all__'
         model = Post
@@ -26,7 +28,8 @@ class CommentSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return comment
-    
+
+
 class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
