@@ -28,3 +28,11 @@ class PostTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
         self.assertEqual(response.data, [])
+
+    def test_create_post(self):
+        """Test the api can create a post."""
+        response = self.client.post(self.url, data={"content": "test content"
+                                                    })
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['content'], 'test content')
+        self.assertEqual(response.data['author'], self.user.username)
