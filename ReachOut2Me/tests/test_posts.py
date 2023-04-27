@@ -44,3 +44,10 @@ class PostTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['content'], 'test content')
         self.assertEqual(response.data['author'], self.user.username)
+
+    def test_delete_a_post_by_id(self):
+        """Test the api can delete a post by id."""
+        url = reverse("post_detail", kwargs={"pk": 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Post.objects.count(), 0)
