@@ -21,8 +21,15 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         instance.delete()
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
+    def put(self, request, *args, **kwargs):
+        post = Post.objects.get(id=kwargs['pk'])
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            if request.user == post.author:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'You are not the author of this post.'}, status=status.HTTP_403_FORBIDDEN)
 
 
 # the class below is used to like/unlike a post
