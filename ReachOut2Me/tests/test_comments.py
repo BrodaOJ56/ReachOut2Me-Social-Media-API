@@ -28,7 +28,7 @@ class CommentTestCase(TestCase):
         )
         self.post = Post.objects.create(
             content="test content",
-            user=self.user
+            author=self.user
         )
         self.comment = Comment.objects.create(
             content="test comment",
@@ -41,11 +41,11 @@ class CommentTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
-    # def test_get_comment_on_a_post(self):
-    #     """Test the api can get comment on a post."""
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data[0]["content"], "test comment")
-    #     self.assertEqual(response.data[0]["author"], self.user2.id)
-    #     self.assertEqual(response.data[0]["post"], self.post.id)
-    #
+    def test_get_comment_on_a_post(self):
+        """Test the api can get comment on a post."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["content"], "test comment")
+        self.assertEqual(response.data[0]["author"], self.user2.username)
+        self.assertEqual(response.data[0]["post"], self.post.id)
+
