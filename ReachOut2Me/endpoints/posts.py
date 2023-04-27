@@ -21,6 +21,9 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         instance.delete()
 
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
+
 
 # the class below is used to like/unlike a post
 # the generic.GenericAPIView class is used to create a custom view
