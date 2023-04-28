@@ -111,3 +111,11 @@ class CommentTestCase(TestCase):
         self.assertEqual(response.data["comment"], self.comment.id)
         self.assertEqual(response.data["reply"], "test comment reply updated")
         self.assertEqual(response.data["user"], self.user2.id)
+
+    def test_delete_comment_reply(self):
+        """Test the api can delete a reply to a comment on a post."""
+        url = reverse("update_delete_comment_reply",
+                      kwargs={"comment_id": self.comment.id, "reply_id": self.reply.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data["message"], "Comment reply deleted successfully.")
