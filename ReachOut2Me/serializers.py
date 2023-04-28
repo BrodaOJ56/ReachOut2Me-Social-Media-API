@@ -24,7 +24,7 @@ class CommentSerializer(serializers.ModelSerializer):
         validated_data.pop('image', None)  # remove the 'image' key from validated_data
         comment = Comment.objects.create(
             author=request.user,
-            image=image,
+            image=image if image else None,
             **validated_data
         )
         return comment

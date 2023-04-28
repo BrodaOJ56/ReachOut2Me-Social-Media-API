@@ -25,7 +25,7 @@ urlpatterns = [
     # allows users to reply a comment and view all comment replies
     path('comments/<int:comment_id>/replies/', ListCreateCommentReply.as_view(), name='create_get_comment_reply'),
     # allows users to update and delete reply
-    path('comments/<int:comment_id>/replies/<int:reply_id>/', UpdateDeleteCommentReply.as_view(), name='create_get_comment_reply'),
+    path('comments/<int:comment_id>/replies/<int:reply_id>/', UpdateDeleteCommentReply.as_view(), name='update_delete_comment_reply'),
     # allows users to login
     path('login/', LoginView.as_view(), name='login_user'),
     # get current user
