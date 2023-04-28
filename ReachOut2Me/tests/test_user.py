@@ -27,3 +27,16 @@ class UserTestCase(TestCase):
         """Test the api can get all users."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_register_user(self):
+        """Test the api can register users"""
+        url = reverse("register_user")
+        data = {
+            "username": "registerme",
+            "password": "Testpassword1",
+            "first_name": "testfirstname",
+            "last_name": "testlastname",
+            "email": "registerme@email.com",
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
