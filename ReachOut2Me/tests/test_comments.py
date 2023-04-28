@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from ..models import Post, Comment
 from rest_framework.authtoken.models import Token
+from django.core import serializers
 
 
 class CommentTestCase(TestCase):
@@ -75,3 +76,19 @@ class CommentTestCase(TestCase):
         self.assertEqual(response.data["content"], "test comment updated")
         self.assertEqual(response.data["author"], self.user2.username)
         self.assertEqual(response.data["post"], self.post.id)
+
+    def test_create_comment_reply(self):
+        """Test the api can reply to a comment on a post."""
+        url = reverse("create_get_comment_reply",
+                      kwargs={"comment_id": self.comment.id})
+        data = {
+            "comment": self.comment.id,
+            "reply": "test comment reply",
+            "user": self.user2.id
+        }
+        response = self.client.post(url, data, format="json")
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["comment"], self.comment.id)
+        self.assertEqual(response.data["reply"], "test comment reply")
+        self.assertEqual(response.data["user"], self.user2.id)
