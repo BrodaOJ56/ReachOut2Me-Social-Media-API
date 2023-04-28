@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from ..serializers import UserProfileSerializer, \
     UploadAvatarSerializer, UserProfile_Serializer, UserSerializer
+from ..utils import validate_country
 
 
 # Just testing out the APIView for the get all users endpoint
@@ -49,6 +50,13 @@ class UserProfileView(APIView):
             if 'telephone_number' in data:
                 if data['telephone_number'] and not data['telephone_number'].isdigit():
                     return Response({'error': 'Telephone number must be a number.'}, status=status.HTTP_400_BAD_REQUEST)
+            # we can comment this block of code if we want to host since we will be using select tag for the country field
+            if 'country' in data:
+                if data['country']:
+                    country = validate_country(data['country'])
+                    if not country:
+                        return Response({'error': 'Invalid country'}, status=status.HTTP_400_BAD_REQUEST)
+            # end of block of code to comment
             serializer = UserProfileSerializer(user_profile, data=data, partial=True)
         else:
             serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)

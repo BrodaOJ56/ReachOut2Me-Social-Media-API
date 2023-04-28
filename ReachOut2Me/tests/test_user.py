@@ -8,18 +8,35 @@ from rest_framework.authtoken.models import Token
 
 class UserTestCase(TestCase):
     """This class defines the test suite for the post model."""
+
     def setUp(self):
-        self.url = reverse('get_all_users')
+        self.url = reverse("get_all_users")
         """Define the test client and other test variables."""
-        self.user = User.objects.create_user(username='testuser', password='testpassword',
-                                             first_name='testfirstname', last_name='testlastname',
-                                             email='testemail@email.com'
-                                             )
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+            first_name="testfirstname",
+            last_name="testlastname",
+            email="testemail@email.com",
+        )
         self.token = Token.objects.create(user=self.user)
         self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_all_users(self):
         """Test the api can get all users."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_register_user(self):
+        """Test the api can register users"""
+        url = reverse("register_user")
+        data = {
+            "username": "registerme",
+            "password": "Testpassword1",
+            "first_name": "testfirstname",
+            "last_name": "testlastname",
+            "email": "registerme@email.com",
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

@@ -3,6 +3,8 @@ from .models import Post, Comment, Message, FriendRequest, UserProfile, User, Co
 
 
 class PostSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(required=False)
+
     class Meta:
         fields = '__all__'
         model = Post
@@ -22,11 +24,12 @@ class CommentSerializer(serializers.ModelSerializer):
         validated_data.pop('image', None)  # remove the 'image' key from validated_data
         comment = Comment.objects.create(
             author=request.user,
-            image=image,
+            image=image if image else None,
             **validated_data
         )
         return comment
-    
+
+
 class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'

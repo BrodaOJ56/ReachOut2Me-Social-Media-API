@@ -31,7 +31,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # the post that the comment is on
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-     # Allow users to like a comment
+    # Allow users to like a comment
     likes = models.ManyToManyField(User, related_name='comment_likes', blank=True)
     # the time the comment was created
     created_at = models.DateTimeField(auto_now_add=True)
@@ -57,6 +57,7 @@ class CommentReply(models.Model):
 
     def __str__(self):
         return f'Reply by {self.user.username} to {self.comment}'
+
 
 class Message(models.Model):
     # the sender of the message
