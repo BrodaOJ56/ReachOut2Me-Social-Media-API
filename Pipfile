@@ -6,10 +6,6 @@ name = "pypi"
 [packages]
 django = "*"
 django-rest-auth = "*"
-environs = {version = "==8.0.0", extras = ["django"]}
-psycopg2-binary = "*"
-whitenoise = "*"
-gunicorn = "*"
 
 [dev-packages]
 
