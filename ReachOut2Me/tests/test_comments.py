@@ -87,7 +87,6 @@ class CommentTestCase(TestCase):
             "user": self.user2.id
         }
         response = self.client.post(url, data, format="json")
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["comment"], self.comment.id)
         self.assertEqual(response.data["reply"], "test comment reply")
