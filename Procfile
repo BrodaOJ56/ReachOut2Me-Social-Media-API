@@ -1,1 +1,1 @@
-web gunicorn SocialMedia_project.wsgi:application --log-file -
+web: gunicorn socialMedia_project.wsgi --log-file - --log-level debug
