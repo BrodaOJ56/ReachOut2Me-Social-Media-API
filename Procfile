@@ -1,1 +1,1 @@
-web: gunicorn socialMedia_project.wsgi
+web: gunicorn SocialMedia_project.wsgi
