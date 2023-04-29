@@ -66,8 +66,6 @@ class PostLikeView(generics.GenericAPIView):
         return Response({'post': serializer.data, 'message': message}, status=status.HTTP_200_OK)
 
 
-class CreateComment(APIView):
-    pass
 
 
 class CreateGetComment(APIView):
