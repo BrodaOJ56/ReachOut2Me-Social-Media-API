@@ -109,3 +109,20 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+
+
+class Notification(models.Model):
+    # the user who the notification is for
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # the content of the notification
+    content = models.TextField()
+    # whether the notification has been read or not
+    read = models.BooleanField(default=False)
+    # the time the notification was created
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'ReachOut2Me'
+
+    def __str__(self):
+        return self.content
