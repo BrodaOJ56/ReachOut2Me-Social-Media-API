@@ -2,7 +2,7 @@ from .endpoints.users import *
 from .endpoints.auth import *
 from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply
-
+from .endpoints.message import MessageList, MessageDetail
 urlpatterns = [
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
     path('register/', RegisterUser.as_view(), name='register_user'),
@@ -33,4 +33,6 @@ urlpatterns = [
     # logout user
     path('logout/', LogoutView.as_view(), name='logout_user'),
     path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
+    path('messages/', MessageList.as_view(), name='message-list'),
+    path('messages/<int:pk>/', MessageDetail.as_view(), name='message-detail'),
 ]
