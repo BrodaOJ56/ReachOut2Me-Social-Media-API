@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'ReachOut2Me.tests',
 
-    'ReachOut2Me.apps.Reachout2MeConfig', # new
-    #'ReachOut2Me'
+    #'ReachOut2Me.apps.Reachout2MeConfig', # new
+    'ReachOut2Me'
 ]
 
 # REST_FRAMEWORK = {
