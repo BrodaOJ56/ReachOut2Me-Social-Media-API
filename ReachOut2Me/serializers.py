@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, FriendRequest, UserProfile, User, CommentReply
+from .models import Post, Comment, Message, UserProfile, User, CommentReply
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -42,12 +42,6 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
 
 
-class FriendRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = '__all__'
-        model = FriendRequest
-
-
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -80,8 +74,4 @@ class UserProfile_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['id', 'username', 'email',
-                  'first_name', 'last_name', 'date_of_birth',
-                  'avatar', 'bio', 'date_joined', 'gender',
-                  'country', 'state_or_city', 'telephone_number'
-                  ]
+        fields = '__all__'
