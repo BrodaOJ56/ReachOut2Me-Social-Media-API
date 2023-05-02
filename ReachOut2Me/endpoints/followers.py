@@ -76,14 +76,23 @@ def unfollow_user(request, user_id):
     return Response({"success": "User unfollowed successfully"}, status=status.HTTP_200_OK)
 
 
+# Decorator indicates that this function can handle HTTP GET requests
 @api_view(['GET'])
+# Takes the request object and the ID of the user to get followers for as parameters
 def followers_list(request, user_id):
     try:
+        # Try to retrieve the user by ID
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
+        # If the user is not found, return a 404 error response
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+    # Retrieve all followers for the user
     followers = Follow.objects.filter(following=user)
+    
+    # Create a list of dictionaries containing the IDs and usernames of the followers
     followers_list = [{'id': follower.follower.id, 'username': follower.follower.username} for follower in followers]
     
+    # Return the list of followers as a JSON response
     return Response(followers_list, status=status.HTTP_200_OK)
+
