@@ -14,30 +14,40 @@ class PostListCreateView(generics.ListCreateAPIView):
         serializer.save(author=self.request.user)
 
 
+# The PostDetailView class is a generic view that retrieves, updates, or deletes a Post instance
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    # Set the queryset attribute to retrieve all Post instances
     queryset = Post.objects.all()
+    # Set the serializer_class attribute to PostSerializer
     serializer_class = PostSerializer
 
+    # Define the perform_destroy method to delete a Post instance
     def perform_destroy(self, instance):
         instance.delete()
 
+    # Define the put method to update a Post instance
     def put(self, request, *args, **kwargs):
+        # Retrieve the Post instance using the pk value from the URL
         post = Post.objects.get(id=kwargs['pk'])
+        # Instantiate a PostSerializer with the Post instance and request data
         serializer = PostSerializer(post, data=request.data)
+        # Validate the serializer data
         if serializer.is_valid():
+            # Check if the user is the author of the post
             if request.user == post.author:
+                # Save the updated Post instance
                 serializer.save()
+                # Return the updated Post instance with a 200 OK status code
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
+                # Return an error message if the user is not the author with a 403 Forbidden status code
                 return Response({'error': 'You are not the author of this post.'}, status=status.HTTP_403_FORBIDDEN)
 
-
-# the class below is used to like/unlike a post
-# the generic.GenericAPIView class is used to create a custom view
+# The PostLikeView class is a custom view to like or unlike a Post instance
 class PostLikeView(generics.GenericAPIView):
-    # the queryset attribute is used to retrieve the post object
+    # Set the queryset attribute to retrieve all Post instances
     queryset = Post.objects.all()
-    # the serializer_class attribute is used to serialize the post object
+    # Set the serializer_class attribute to PostSerializer
     serializer_class = PostSerializer
 
     def post(self, request, pk):
