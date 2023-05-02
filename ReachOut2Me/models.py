@@ -76,26 +76,11 @@ class Message(models.Model):
     def __str__(self):
         return self.content
 
-
-class FriendRequest(models.Model):
-    # the user who sent the friend request
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend_requests_sent')
-    # the user who received the friend request
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend_requests_received')
-    # whether the friend request has been accepted or not
-    accepted = models.BooleanField(default=False)
-    # the time the friend request was sent
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        app_label = 'ReachOut2Me'
-
-    def __str__(self):
-        return f'{self.sender} -> {self.recipient}'
     
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    following = models.ManyToManyField(User, related_name='followers_profile', blank=True)
     bio = models.TextField(null=True)
     avatar = models.ImageField(upload_to='avatars/', null=True)
     gender = models.CharField(max_length=10, null=True)
@@ -103,12 +88,28 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=100, null=True)
     state_or_city = models.CharField(max_length=100, null=True)
     telephone_number = models.CharField(max_length=20, null=True)
+    followers = models.ManyToManyField(User, related_name='following_profiles', blank=True)
 
     class Meta:
         app_label = 'ReachOut2Me'
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_relationships')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_relationships')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'ReachOut2Me'
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f'{self.follower.username} follows {self.following.username}'
+
 
 
 class Notification(models.Model):

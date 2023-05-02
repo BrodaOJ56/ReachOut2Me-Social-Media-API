@@ -3,6 +3,8 @@ from .endpoints.auth import *
 from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply
 from .endpoints.message import MessageList, MessageDetail
+from .endpoints.followers import follow_user, unfollow_user,followers_list
+
 urlpatterns = [
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
     path('register/', RegisterUser.as_view(), name='register_user'),
@@ -35,4 +37,8 @@ urlpatterns = [
     path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
     path('messages/', MessageList.as_view(), name='message-list'),
     path('messages/<int:pk>/', MessageDetail.as_view(), name='message-detail'),
+    path('user/<int:user_id>/follow/', follow_user, name='follow_user'),
+    path('user/<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
+    path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
+
 ]
