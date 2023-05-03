@@ -1,5 +1,5 @@
 from rest_framework import generics, status
-from ..models import Post, Comment, CommentReply
+from ..models import Post, Comment, CommentReply, Notification
 from rest_framework.response import Response
 from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer
 from rest_framework.views import APIView
@@ -107,6 +107,7 @@ class CreateGetComment(APIView):
         # if the data is valid, the save method is used to save the comment object
         if serializer.is_valid():
             serializer.save(post=post)
+            Notification.create(user=post.author, content=f'{request.user.username} commented on your post', category='comment')
             # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # if the data is not valid, the errors are returned with a 400 Bad Request status code
@@ -195,6 +196,7 @@ class ListCreateCommentReply(APIView):
         # if the data is valid, the save method is used to save the comment reply object
         if serializer.is_valid():
             serializer.save(comment=comment, user=request.user)
+            Notification.create(user=comment.user, content=f'{request.user.username} replied to your comment', category='comment')
             # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # if the data is not valid, the errors are returned with a 400 Bad Request status code
