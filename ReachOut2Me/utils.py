@@ -1,13 +1,28 @@
 import re
 
 
+# function to validate the email
 def validate_email(email):
+    # check if the email contains only one @
+    # check if the email contains only one .
+    # check if the email contains only alphanumeric characters, ., +, -, and _
+    # check if the email contains at least one character before @
+    # check if the email contains at least one character between @ and .
+    # check if the email contains at least two characters after .
+    # if any of the above conditions are not met, return False
     if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
         return False
     return True
 
 
+# function to validate the password
 def validate_password(password):
+    # check if the password contains at least one uppercase letter
+    # check if the password is at least 8 characters long
+    # check if the password contains at least one lowercase letter
+    # check if the password contains at least one number
+    # check if the password does not contain spaces
+    # if any of the above conditions are not met, return False
     if (
         not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", password)
         or " " in password
@@ -16,6 +31,7 @@ def validate_password(password):
     return True
 
 
+# list of countries
 countries = [
     "afghanistan",
     "aland islands",
@@ -268,7 +284,11 @@ countries = [
 ]
 
 
+# function to validate country
 def validate_country(country):
+    # convert country to lowercase and check if it is in the list of countries
     if country.lower() not in countries:
+        # if not in list return false
         return False
+    # if in list, return true
     return True
