@@ -3,27 +3,39 @@ from .models import Post, Comment, Message, UserProfile, User, CommentReply
 
 
 class PostSerializer(serializers.ModelSerializer):
+    # set the author field to a required field
     author = serializers.CharField(required=False)
 
+    # define the fields that will be serialized/deserialized
     class Meta:
+        # set the fields to all fields in the Post model
         fields = '__all__'
+        # set the model to the Post model
         model = Post
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    # set the author field to a string representation of the author
     author = serializers.StringRelatedField()
+    # set the required for the image fields to False
+    # the use_url=True means that the image will be returned as a URL
     image = serializers.ImageField(required=False, use_url=True)
 
     class Meta:
         fields = '__all__'
         model = Comment
 
+    # override the create method to allow the creation of a comment with an image
     def create(self, validated_data):
+        # get the request from the context
         request = self.context.get('request')
+        # get the image from the request
         image = request.FILES.get('image')
         validated_data.pop('image', None)  # remove the 'image' key from validated_data
+        # create the comment
         comment = Comment.objects.create(
             author=request.user,
+            # set the image to the image from the request if it exists and None otherwise
             image=image if image else None,
             **validated_data
         )
@@ -66,6 +78,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfile_Serializer(serializers.ModelSerializer):
+    # getting this fields from the UserSerializer
     username = serializers.CharField(source='user.username')
     email = serializers.EmailField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
