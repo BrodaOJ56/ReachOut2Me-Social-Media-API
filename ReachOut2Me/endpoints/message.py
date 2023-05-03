@@ -1,5 +1,5 @@
 from rest_framework import generics
-from ..models import Message
+from ..models import Message, Notification
 from ..serializers import MessageSerializer
 
 
@@ -15,7 +15,10 @@ class MessageList(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
 
     def perform_create(self, serializer):
-        serializer.save(sender=self.request.user)
+        message = serializer.save(sender=self.request.user)
+        Notification.create(user=message.recipient,
+                            content=f'You have a new message from {message.sender.username}',
+                            category='message')
 
 
 """

@@ -4,6 +4,7 @@ from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply
 from .endpoints.message import MessageList, MessageDetail
 from .endpoints.followers import follow_user, unfollow_user,followers_list
+from .endpoints.notification import NotificationList
 
 urlpatterns = [
     # get all users
@@ -49,5 +50,7 @@ urlpatterns = [
     path('user/<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
     # list followers
     path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
+    # list notifications
+    path('notifications/', NotificationList.as_view(), name='notification_list'),
 
 ]

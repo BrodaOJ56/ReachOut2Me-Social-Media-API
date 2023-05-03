@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, UserProfile, User, CommentReply
+from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -87,4 +87,10 @@ class UserProfile_Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
+        fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'
