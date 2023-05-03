@@ -196,7 +196,7 @@ class ListCreateCommentReply(APIView):
         # if the data is valid, the save method is used to save the comment reply object
         if serializer.is_valid():
             serializer.save(comment=comment, user=request.user)
-            Notification.create(user=comment.user, content=f'{request.user.username} replied to your comment', category='comment')
+            Notification.create(user=comment.user, content=f'{request.user.username} replied to your comment', category='reply')
             # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # if the data is not valid, the errors are returned with a 400 Bad Request status code
