@@ -76,7 +76,6 @@ class Message(models.Model):
     def __str__(self):
         return self.content
 
-    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -97,7 +96,6 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s profile"
 
 
-
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_relationships')
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_relationships')
@@ -111,7 +109,6 @@ class Follow(models.Model):
         return f'{self.follower.username} follows {self.following.username}'
 
 
-
 class Notification(models.Model):
     # the user who the notification is for
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -121,9 +118,16 @@ class Notification(models.Model):
     read = models.BooleanField(default=False)
     # the time the notification was created
     created_at = models.DateTimeField(auto_now_add=True)
+    category = models.CharField(max_length=30, null=True)
 
     class Meta:
         app_label = 'ReachOut2Me'
+
+    @classmethod
+    def create(cls, user, content, category):
+        notification = cls(user=user, content=content, category=category)
+        notification.save()
+        return notification
 
     def __str__(self):
         return self.content
