@@ -7,9 +7,17 @@ from django.shortcuts import get_object_or_404
 
 
 class PostListCreateView(generics.ListCreateAPIView):
+    """
+    The `queryset` attribute defines the list of posts to be displayed,
+    while the `serializer_class` attribute determines how the data is serialized and deserialized.
+    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    """    
+    The `perform_create` method is used to save the post object with the authenticated user as the author. 
+    This ensures that the author of the post is properly associated with it in the database.
+    """
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -42,6 +50,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
             else:
                 # Return an error message if the user is not the author with a 403 Forbidden status code
                 return Response({'error': 'You are not the author of this post.'}, status=status.HTTP_403_FORBIDDEN)
+
 
 # The PostLikeView class is a custom view to like or unlike a Post instance
 class PostLikeView(generics.GenericAPIView):
@@ -76,54 +85,81 @@ class PostLikeView(generics.GenericAPIView):
         return Response({'post': serializer.data, 'message': message}, status=status.HTTP_200_OK)
 
 
-
-
+# view to create and get comments
 class CreateGetComment(APIView):
+    # set the serializer_class attribute to CommentSerializer
     serializer_class = CommentSerializer
 
+    # the post method is used to create a comment
+    # the post_id argument is used to retrieve the post object
+    # the request argument is used to retrieve the request object
     def post(self, request, post_id):
+        # the try block is used to retrieve the post object using the post_id argument
         try:
             post = Post.objects.get(id=post_id)
+        # the except block is used to return an error message if the post object does not exist
         except Post.DoesNotExist:
             return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the serializer_class attribute is used to instantiate a CommentSerializer object
         serializer = self.serializer_class(data=request.data, context={'request': request})
+        # the is_valid method is used to validate the serializer data
+        # if the data is valid, the save method is used to save the comment object
         if serializer.is_valid():
             serializer.save(post=post)
+            # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # if the data is not valid, the errors are returned with a 400 Bad Request status code
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # the get method is used to retrieve all comments for a post
     def get(self, request, post_id):
+        # the try block is used to retrieve the post object using the post_id argument
         try:
             post = Post.objects.get(id=post_id)
+        # the except block is used to return an error message if the post object does not exist
         except Post.DoesNotExist:
             return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the filter method is used to retrieve all comments for the post object
         comments = Comment.objects.filter(post=post)
+        # the serializer_class attribute is used to instantiate a CommentSerializer object
+        # the many argument is set to True to serialize multiple objects
         serializer = self.serializer_class(comments, many=True)
+        # the Response method is used to send a response to the user
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
+# view to update and delete comments
 class UpdateDeleteComment(APIView):
+    # set the serializer_class attribute to CommentSerializer
     serializer_class = CommentSerializer
 
     def put(self, request, post_id, comment_id):
+        # the try block is used to retrieve the post object using the post_id argument
         try:
             post = Post.objects.get(id=post_id)
+        # the except block is used to return an error message if the post object does not exist
         except Post.DoesNotExist:
             return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the try block is used to retrieve the comment object using the comment_id argument
         try:
             comment = Comment.objects.get(id=comment_id, post=post)
+        # the except block is used to return an error message if the comment object does not exist
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the serializer_class attribute is used to instantiate a CommentSerializer object
         serializer = self.serializer_class(comment, data=request.data, context={'request': request})
+        # if the data is valid, the save method is used to save the comment object
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        # if the data is not valid, the errors are returned with a 400 Bad Request status code
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # the delete method is used to delete a comment
     def delete(self, request, post_id, comment_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -135,78 +171,122 @@ class UpdateDeleteComment(APIView):
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # delete the comment object
         comment.delete()
         return Response({'message': 'Comment deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+# view to create and get comment replies
 class ListCreateCommentReply(APIView):
+    # set the serializer_class attribute to CommentReplySerializer
     serializer_class = CommentReplySerializer
 
+    # the post method is used to create a comment reply
     def post(self, request, comment_id):
+        # the try block is used to retrieve the comment object using the comment_id argument
         try:
             comment = Comment.objects.get(id=comment_id)
+        # the except block is used to return an error message if the comment object does not exist
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the serializer_class attribute is used to instantiate a CommentReplySerializer object
         serializer = self.serializer_class(data=request.data, context={'request': request})
+        # if the data is valid, the save method is used to save the comment reply object
         if serializer.is_valid():
             serializer.save(comment=comment, user=request.user)
+            # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # if the data is not valid, the errors are returned with a 400 Bad Request status code
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # the get method is used to retrieve all comment replies for a comment
     def get(self, request, comment_id):
+        # the try block is used to retrieve the comment object using the comment_id argument
         try:
             comment = Comment.objects.get(id=comment_id)
+        # the except block is used to return an error message if the comment object does not exist
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the filter method is used to retrieve all comment replies for the comment object
         replies = CommentReply.objects.filter(comment=comment)
+        # the serializer_class attribute is used to instantiate a CommentReplySerializer object
+        # the many argument is set to True to serialize multiple objects
         serializer = self.serializer_class(replies, many=True)
+        # the Response method is used to send a response to the user
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# view to update and delete comment replies
 class UpdateDeleteCommentReply(APIView):
+    # set the serializer_class attribute to CommentReplySerializer
     serializer_class = CommentReplySerializer
 
+    # the put method is used to update a comment reply
     def put(self, request, comment_id, reply_id):
+        # the try block is used to retrieve the comment object using the comment_id argument
         try:
             comment = Comment.objects.get(id=comment_id)
+        # the except block is used to return an error message if the comment object does not exist
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the try block is used to retrieve the comment reply object using the reply_id argument
         try:
             reply = CommentReply.objects.get(id=reply_id, comment=comment)
+        # the except block is used to return an error message if the comment reply object does not exist
         except CommentReply.DoesNotExist:
             return Response({'error': 'Comment reply not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the serializer_class attribute is used to instantiate a CommentReplySerializer object
         serializer = self.serializer_class(reply, data=request.data, context={'request': request, 'comment_id': comment_id})
+        # if the data is valid, the save method is used to save the comment reply object
         if serializer.is_valid():
             serializer.save()
+            # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_200_OK)
+        # if the data is not valid, the errors are returned with a 400 Bad Request status code
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # the delete method is used to delete a comment reply
     def delete(self, request, comment_id, reply_id):
+        # the try block is used to retrieve the comment object using the comment_id argument
         try:
             comment = Comment.objects.get(id=comment_id)
+        # the except block is used to return an error message if the comment object does not exist
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the try block is used to retrieve the comment reply object using the reply_id argument
         try:
             reply = CommentReply.objects.get(id=reply_id, comment=comment)
+        # the except block is used to return an error message if the comment reply object does not exist
         except CommentReply.DoesNotExist:
             return Response({'error': 'Comment reply not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # the delete method is used to delete the comment reply object
         reply.delete()
+        # the Response method is used to send a response to the user
         return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+# view to like and unlike a post
 class CommentLike(APIView):
+    # the post method is used to like a comment
     def post(self, request, comment_id):
+        # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
+        # add the user to the likes field of the comment object
         comment.likes.add(request.user)
+        # return a success message
         return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_200_OK)
 
+    # the delete method is used to unlike a comment
     def delete(self, request, comment_id):
+        # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
+        # remove the user from the likes field of the comment object
         comment.likes.remove(request.user)
+        # return a success message
         return Response({'message': 'Comment unliked successfully.'}, status=status.HTTP_200_OK)
