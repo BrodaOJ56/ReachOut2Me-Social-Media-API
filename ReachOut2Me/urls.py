@@ -6,8 +6,11 @@ from .endpoints.message import MessageList, MessageDetail
 from .endpoints.followers import follow_user, unfollow_user,followers_list
 
 urlpatterns = [
+    # get all users
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
+    # register a user
     path('register/', RegisterUser.as_view(), name='register_user'),
+    # view user profile
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     # path('avatar/<str:first_name>/<str:last_name>/', UploadAvatarView.as_view(), name='user_avatar'),
     path('avatar/', UploadAvatarView.as_view(), name='user_avatar'),
@@ -34,11 +37,17 @@ urlpatterns = [
     path('my_account/', GetUserProfile.as_view(), name='get_user_profile'),
     # logout user
     path('logout/', LogoutView.as_view(), name='logout_user'),
+    # search for user by username
     path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
+    # allow users to create message and get message
     path('messages/', MessageList.as_view(), name='message-list'),
+    # allow users to view message by id
     path('messages/<int:pk>/', MessageDetail.as_view(), name='message-detail'),
+    # follow user
     path('user/<int:user_id>/follow/', follow_user, name='follow_user'),
+    # unfollow user
     path('user/<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
+    # list followers
     path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
 
 ]
