@@ -21,4 +21,11 @@ class GetNotificationByCategory(APIView):
         if category == 'comment':
             post = kwargs.get('post')
             return redirect(f'/api/posts/{post}/')
-
+        elif category == 'message':
+            pass
+        elif category == 'reply':
+            pass
+        elif category == 'follow':
+            pass
+        elif category == 'like':
+            pass
