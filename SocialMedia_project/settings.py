@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     'ReachOut2Me.tests',
+    'drf_spectacular',
 
     #'ReachOut2Me.apps.Reachout2MeConfig', # new
     'ReachOut2Me'
@@ -66,8 +67,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         # other permission classes go here, if needed
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ReachOut2Me Social Media API',
+    'DESCRIPTION': 'This is a web application built with Django Restframework that enables users to sign up, log in, and create, edit, and delete posts with customized text, pictures, and links. Users can also like, comment/reply, and save posts, search for other users by username, follow and unfollow users to view their posts, and receive notifications. The application also includes message functionality',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

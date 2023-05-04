@@ -7,9 +7,14 @@ from rest_framework import status
 from ..serializers import UserProfileSerializer, \
     UploadAvatarSerializer, UserProfile_Serializer, UserSerializer
 from ..utils import validate_country
+from drf_spectacular.utils import extend_schema
 
 
 # view to get all users
+@extend_schema(
+        request=UserProfile_Serializer,
+        responses={200: UserSerializer},
+    )
 class GetAllUsers(APIView):
     # Allow any user (authenticated or not) to hit this endpoint.
     permission_classes = [AllowAny]
@@ -26,6 +31,10 @@ class GetAllUsers(APIView):
 
 
 # view to get a single user
+@extend_schema(
+        request=UserProfile_Serializer,
+        responses={200: UserSerializer},
+    )
 class GetUserProfile(APIView):
     # this can only be accessed by authenticated users
     # get method to get a single user
@@ -38,6 +47,10 @@ class GetUserProfile(APIView):
 
 
 # view to get and update a user profile
+@extend_schema(
+        request=UserProfileSerializer,
+        responses={200: UserSerializer},
+    )
 class UserProfileView(APIView):
     def get(self, request):
         # query the UserProfile table in the database to get a single user using the logged-in user
@@ -104,6 +117,10 @@ class UserProfileView(APIView):
 
 
 # view to upload a user avatar
+@extend_schema(
+        request=UploadAvatarSerializer,
+        responses={200: UserSerializer},
+    )
 class UploadAvatarView(APIView):
     # this can only be accessed by authenticated users
     # put method to upload a user avatar
@@ -128,6 +145,10 @@ class UploadAvatarView(APIView):
 
 
 # view to get a single user by username
+@extend_schema(
+        request=UserProfile_Serializer,
+        responses={200: UserSerializer},
+    )
 class SearchUserView(APIView):
     def get(self, request, username):
         # query the database and get the user by username
