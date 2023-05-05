@@ -11,7 +11,7 @@ urlpatterns = [
     # get all users
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
     # register a user
-    path('register/', RegisterUser.as_view(), name='register_user'),
+    # path('register/', RegisterUser.as_view(), name='register_user'),
     # view user profile
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     # path('avatar/<str:first_name>/<str:last_name>/', UploadAvatarView.as_view(), name='user_avatar'),
@@ -34,11 +34,11 @@ urlpatterns = [
     # allows users to update and delete reply
     path('comments/<int:comment_id>/replies/<int:reply_id>/', UpdateDeleteCommentReply.as_view(), name='update_delete_comment_reply'),
     # allows users to login
-    path('login/', LoginView.as_view(), name='login_user'),
+    # path('login/', LoginView.as_view(), name='login_user'),
     # get current user
     path('my_account/', GetUserProfile.as_view(), name='get_user_profile'),
     # logout user
-    path('logout/', LogoutView.as_view(), name='logout_user'),
+    # path('logout/', LogoutView.as_view(), name='logout_user'),
     # search for user by username
     path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
     # allow users to create message and get message
