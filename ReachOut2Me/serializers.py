@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification
+from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification, CommentReplyLike
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.registration.views import RegisterView
 
@@ -110,3 +110,13 @@ class NameRegistrationSerializer(RegisterSerializer):
 
 class NameRegistrationView(RegisterView):
     serializer_class = NameRegistrationSerializer
+
+
+class CommentReplyLikeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    comment_reply = serializers.PrimaryKeyRelatedField(queryset=CommentReply.objects.all())
+
+    class Meta:
+        model = CommentReplyLike
+        fields = ['id', 'user', 'comment_reply']
+        read_only_fields = ['id']
