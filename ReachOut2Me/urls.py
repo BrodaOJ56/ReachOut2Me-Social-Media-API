@@ -5,6 +5,7 @@ from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, C
 from .endpoints.message import MessageList, MessageDetail
 from .endpoints.followers import follow_user, unfollow_user,followers_list
 from .endpoints.notification import NotificationList
+from .serializers import NameRegistrationView
 
 urlpatterns = [
     # get all users
@@ -52,5 +53,6 @@ urlpatterns = [
     path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
     # list notifications
     path('notifications/', NotificationList.as_view(), name='notification_list'),
+    path('dj-rest-auth/registration/', NameRegistrationView.as_view(), name="rest_name_register")
 
 ]
