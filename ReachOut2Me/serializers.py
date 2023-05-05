@@ -1,5 +1,7 @@
 from rest_framework import serializers, viewsets
 from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.registration.views import RegisterView
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -94,3 +96,17 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = '__all__'
+
+
+class NameRegistrationSerializer(RegisterSerializer):
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+
+    def custom_signup(self, request, user):
+        user.first_name = self.validated_data.get('first_name', '')
+        user.last_name = self.validated_data.get('last_name', '')
+        user.save(update_fields=['first_name', 'last_name'])
+
+
+class NameRegistrationView(RegisterView):
+    serializer_class = NameRegistrationSerializer
