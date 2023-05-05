@@ -1,7 +1,7 @@
 from rest_framework import generics, status
-from ..models import Post, Comment, CommentReply
+from ..models import Post, Comment, CommentReply, CommentReplyLike
 from rest_framework.response import Response
-from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer
+from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer, CommentReplyLikeSerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
@@ -269,6 +269,38 @@ class UpdateDeleteCommentReply(APIView):
         reply.delete()
         # the Response method is used to send a response to the user
         return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentReplyLikeView(APIView):
+    def post(self, request, comment_reply_id):
+        try:
+            comment_reply = CommentReply.objects.get(pk=comment_reply_id)
+        except CommentReply.DoesNotExist:
+            return Response({"message": "Comment reply not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        comment_reply_like, created = CommentReplyLike.objects.get_or_create(
+            comment_reply=comment_reply, user=request.user)
+
+        if not created:
+            return Response({"message": "You have already liked this comment reply."}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = CommentReplyLikeSerializer(comment_reply_like)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, comment_reply_id):
+        try:
+            comment_reply = CommentReply.objects.get(pk=comment_reply_id)
+        except CommentReply.DoesNotExist:
+            return Response({"message": "Comment reply not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        comment_reply_like = CommentReplyLike.objects.filter(
+            comment_reply=comment_reply, user=request.user)
+
+        if not comment_reply_like.exists():
+            return Response({"message": "You have not liked this comment reply."}, status=status.HTTP_400_BAD_REQUEST)
+
+        comment_reply_like.delete()
+        return Response({"message": "You have unliked this comment reply."}, status=status.HTTP_200_OK)
 
 
 # view to like and unlike a post
