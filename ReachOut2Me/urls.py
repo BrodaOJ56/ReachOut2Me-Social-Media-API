@@ -1,7 +1,7 @@
 from .endpoints.users import *
 from .endpoints.auth import *
 from django.urls import path
-from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply
+from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply, CommentReplyLikeView
 from .endpoints.message import MessageList, MessageDetail
 from .endpoints.followers import follow_user, unfollow_user,followers_list
 from .endpoints.notification import NotificationList
@@ -51,6 +51,8 @@ urlpatterns = [
     path('user/<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
     # list followers
     path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
+    # like and unlike a comment reply
+    path('comment-replies/<int:comment_reply_id>/like/', CommentReplyLikeView.as_view(), name='comment_reply_like'),
     # list notifications
     path('notifications/', NotificationList.as_view(), name='notification_list'),
     path('dj-rest-auth/registration/', NameRegistrationView.as_view(), name="rest_name_register")
