@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,10 +46,16 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'ReachOut2Me.tests',
     'drf_spectacular',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
 
     #'ReachOut2Me.apps.Reachout2MeConfig', # new
     'ReachOut2Me'
 ]
+
+SITE_ID = 1
 
 # REST_FRAMEWORK = {
 # 'DEFAULT_PERMISSION_CLASSES': [
@@ -108,6 +115,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SocialMedia_project.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.EmailLoginSerializer',
+}
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to log in by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'ReachOut2Me.serializers.RegisterSerializer'}
+
+REST_AUTH = {
+    'OLD_PASSWORD_FIELD_ENABLED': True,
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
