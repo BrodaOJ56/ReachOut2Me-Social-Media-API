@@ -4,9 +4,13 @@ from rest_framework import status
 
 from ..models import UserProfile, User, Follow
 from ..serializers import UserProfile_Serializer
+from drf_spectacular.utils import extend_schema
 
 
 # Decorator indicates that this function can handle HTTP POST requests
+@extend_schema(
+        tags=['followers']
+    )
 @api_view(['POST'])
 # Takes the request object and the ID of the user to follow as parameters
 def follow_user(request, user_id):
@@ -41,6 +45,9 @@ def follow_user(request, user_id):
 
 
 # Decorator indicates that this function can handle HTTP POST requests
+@extend_schema(
+        tags=['followers']
+    )
 @api_view(['POST'])
 # Takes the request object and the ID of the user to unfollow as parameters
 def unfollow_user(request, user_id):
@@ -77,6 +84,9 @@ def unfollow_user(request, user_id):
 
 
 # Decorator indicates that this function can handle HTTP GET requests
+@extend_schema(
+        tags=['followers']
+    )
 @api_view(['GET'])
 # Takes the request object and the ID of the user to get followers for as parameters
 def followers_list(request, user_id):
