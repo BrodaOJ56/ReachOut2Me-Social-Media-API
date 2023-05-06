@@ -14,6 +14,7 @@ from drf_spectacular.utils import extend_schema
 @extend_schema(
         request=UserProfile_Serializer,
         responses={200: UserSerializer},
+        tags=['Users']
     )
 class GetAllUsers(APIView):
     # Allow any user (authenticated or not) to hit this endpoint.
@@ -34,6 +35,7 @@ class GetAllUsers(APIView):
 @extend_schema(
         request=UserProfile_Serializer,
         responses={200: UserSerializer},
+        tags=['Users']
     )
 class GetUserProfile(APIView):
     # this can only be accessed by authenticated users
@@ -50,6 +52,7 @@ class GetUserProfile(APIView):
 @extend_schema(
         request=UserProfileSerializer,
         responses={200: UserSerializer},
+        tags=['Users']
     )
 class UserProfileView(APIView):
     def get(self, request):
@@ -120,6 +123,7 @@ class UserProfileView(APIView):
 @extend_schema(
         request=UploadAvatarSerializer,
         responses={200: UserSerializer},
+        tags=['Users']
     )
 class UploadAvatarView(APIView):
     # this can only be accessed by authenticated users
@@ -148,6 +152,7 @@ class UploadAvatarView(APIView):
 @extend_schema(
         request=UserProfile_Serializer,
         responses={200: UserSerializer},
+        tags=['Users']
     )
 class SearchUserView(APIView):
     def get(self, request, username):
