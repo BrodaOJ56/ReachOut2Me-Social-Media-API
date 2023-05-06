@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer, CommentReplyLikeSerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 
 
 class PostListCreateView(generics.ListCreateAPIView):
@@ -18,6 +19,10 @@ class PostListCreateView(generics.ListCreateAPIView):
     The `perform_create` method is used to save the post object with the authenticated user as the author. 
     This ensures that the author of the post is properly associated with it in the database.
     """
+
+    @extend_schema(
+        tags=['Post']
+    )
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -30,10 +35,16 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
 
     # Define the perform_destroy method to delete a Post instance
+    @extend_schema(
+        tags=['Post']
+    )
     def perform_destroy(self, instance):
         instance.delete()
 
     # Define the put method to update a Post instance
+    @extend_schema(
+        tags=['Post']
+    )
     def put(self, request, *args, **kwargs):
         # Retrieve the Post instance using the pk value from the URL
         post = Post.objects.get(id=kwargs['pk'])
@@ -59,6 +70,9 @@ class PostLikeView(generics.GenericAPIView):
     # Set the serializer_class attribute to PostSerializer
     serializer_class = PostSerializer
 
+    @extend_schema(
+        tags=['Post']
+    )
     def post(self, request, pk):
         # the get_object method is used to retrieve the post object using the pk from the url
         # the pk is passed to the get_object method as an argument
@@ -93,6 +107,9 @@ class CreateGetComment(APIView):
     # the post method is used to create a comment
     # the post_id argument is used to retrieve the post object
     # the request argument is used to retrieve the request object
+    @extend_schema(
+        tags=['Comment']
+    )
     def post(self, request, post_id):
         # the try block is used to retrieve the post object using the post_id argument
         try:
@@ -113,6 +130,9 @@ class CreateGetComment(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # the get method is used to retrieve all comments for a post
+    @extend_schema(
+        tags=['Comment']
+    )
     def get(self, request, post_id):
         # the try block is used to retrieve the post object using the post_id argument
         try:
@@ -135,6 +155,9 @@ class UpdateDeleteComment(APIView):
     # set the serializer_class attribute to CommentSerializer
     serializer_class = CommentSerializer
 
+    @extend_schema(
+        tags=['Comment']
+    )
     def put(self, request, post_id, comment_id):
         # the try block is used to retrieve the post object using the post_id argument
         try:
@@ -160,6 +183,9 @@ class UpdateDeleteComment(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # the delete method is used to delete a comment
+    @extend_schema(
+        tags=['Comment']
+    )
     def delete(self, request, post_id, comment_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -182,6 +208,9 @@ class ListCreateCommentReply(APIView):
     serializer_class = CommentReplySerializer
 
     # the post method is used to create a comment reply
+    @extend_schema(
+        tags=['Comment']
+    )
     def post(self, request, comment_id):
         # the try block is used to retrieve the comment object using the comment_id argument
         try:
@@ -201,6 +230,9 @@ class ListCreateCommentReply(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # the get method is used to retrieve all comment replies for a comment
+    @extend_schema(
+        tags=['Comment']
+    )
     def get(self, request, comment_id):
         # the try block is used to retrieve the comment object using the comment_id argument
         try:
@@ -223,6 +255,9 @@ class UpdateDeleteCommentReply(APIView):
     # set the serializer_class attribute to CommentReplySerializer
     serializer_class = CommentReplySerializer
 
+    @extend_schema(
+        tags=['Message']
+    )
     # the put method is used to update a comment reply
     def put(self, request, comment_id, reply_id):
         # the try block is used to retrieve the comment object using the comment_id argument
@@ -250,6 +285,9 @@ class UpdateDeleteCommentReply(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # the delete method is used to delete a comment reply
+    @extend_schema(
+        tags=['Comment']
+    )
     def delete(self, request, comment_id, reply_id):
         # the try block is used to retrieve the comment object using the comment_id argument
         try:
@@ -272,6 +310,9 @@ class UpdateDeleteCommentReply(APIView):
 
 
 class CommentReplyLikeView(APIView):
+    @extend_schema(
+        tags=['Comment']
+    )
     def post(self, request, comment_reply_id):
         # Get the comment reply object by its ID
         try:
@@ -292,6 +333,9 @@ class CommentReplyLikeView(APIView):
         serializer = CommentReplyLikeSerializer(comment_reply_like)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(
+        tags=['Comment']
+    )
     def delete(self, request, comment_reply_id):
         # Get the comment reply object by its ID
         try:
@@ -315,10 +359,12 @@ class CommentReplyLikeView(APIView):
         return Response({"message": "You have unliked this comment reply."}, status=status.HTTP_200_OK)
 
 
-
 # view to like and unlike a post
 class CommentLike(APIView):
     # the post method is used to like a comment
+    @extend_schema(
+        tags=['Comment']
+    )
     def post(self, request, comment_id):
         # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
@@ -328,6 +374,9 @@ class CommentLike(APIView):
         return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_200_OK)
 
     # the delete method is used to unlike a comment
+    @extend_schema(
+        tags=['Comment']
+    )
     def delete(self, request, comment_id):
         # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
