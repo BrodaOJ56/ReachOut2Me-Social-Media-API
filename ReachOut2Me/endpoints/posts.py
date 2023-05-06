@@ -1,7 +1,7 @@
 from rest_framework import generics, status
-from ..models import Post, Comment, CommentReply
+from ..models import Post, Comment, CommentReply, CommentReplyLike
 from rest_framework.response import Response
-from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer
+from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer, CommentReplyLikeSerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
@@ -269,6 +269,51 @@ class UpdateDeleteCommentReply(APIView):
         reply.delete()
         # the Response method is used to send a response to the user
         return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentReplyLikeView(APIView):
+    def post(self, request, comment_reply_id):
+        # Get the comment reply object by its ID
+        try:
+            comment_reply = CommentReply.objects.get(pk=comment_reply_id)
+        except CommentReply.DoesNotExist:
+            # If the comment reply does not exist, return a 404 error
+            return Response({"message": "Comment reply not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create a new comment reply like object for the current user and the given comment reply
+        comment_reply_like, created = CommentReplyLike.objects.get_or_create(
+            comment_reply=comment_reply, user=request.user)
+
+        # If the comment reply like object was not created (meaning the user has already liked the comment reply), return a 400 error
+        if not created:
+            return Response({"message": "You have already liked this comment reply."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Serialize and return the comment reply like object
+        serializer = CommentReplyLikeSerializer(comment_reply_like)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, comment_reply_id):
+        # Get the comment reply object by its ID
+        try:
+            comment_reply = CommentReply.objects.get(pk=comment_reply_id)
+        except CommentReply.DoesNotExist:
+            # If the comment reply does not exist, return a 404 error
+            return Response({"message": "Comment reply not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get the comment reply like object for the current user and the given comment reply
+        comment_reply_like = CommentReplyLike.objects.filter(
+            comment_reply=comment_reply, user=request.user)
+
+        # If the comment reply like object does not exist (meaning the user has not liked the comment reply), return a 400 error
+        if not comment_reply_like.exists():
+            return Response({"message": "You have not liked this comment reply."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Delete the comment reply like object
+        comment_reply_like.delete()
+
+        # Return a success message
+        return Response({"message": "You have unliked this comment reply."}, status=status.HTTP_200_OK)
+
 
 
 # view to like and unlike a post

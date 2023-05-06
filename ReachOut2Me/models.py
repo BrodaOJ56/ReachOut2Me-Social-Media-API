@@ -57,6 +57,20 @@ class CommentReply(models.Model):
 
     def __str__(self):
         return f'Reply by {self.user.username} to {self.comment}'
+    
+class CommentReplyLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # The user who liked the comment reply
+    comment_reply = models.ForeignKey(CommentReply, on_delete=models.CASCADE, related_name='likes')  # The comment reply that was liked
+    created_at = models.DateTimeField(auto_now_add=True)  # The timestamp when the like was created
+
+    class Meta:
+        app_label = 'ReachOut2Me'
+        unique_together = ('user', 'comment_reply')  # A user can only like a comment reply once
+
+    def __str__(self):
+        return f"{self.user.username} liked {self.comment_reply}"  # String representation of the object```
+
+
 
 
 class Message(models.Model):
