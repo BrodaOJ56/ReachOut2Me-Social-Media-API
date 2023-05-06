@@ -2,6 +2,9 @@ from rest_framework import serializers, viewsets
 from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification, CommentReplyLike
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.registration.views import RegisterView
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.conf import settings
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -106,6 +109,12 @@ class NameRegistrationSerializer(RegisterSerializer):
         user.first_name = self.validated_data.get('first_name', '')
         user.last_name = self.validated_data.get('last_name', '')
         user.save(update_fields=['first_name', 'last_name'])
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
 
 
 class NameRegistrationView(RegisterView):
