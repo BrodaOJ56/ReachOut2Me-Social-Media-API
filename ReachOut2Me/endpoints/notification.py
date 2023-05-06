@@ -2,11 +2,14 @@ from ..models import Notification
 from ..serializers import NotificationSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-#from .message import
 from django.shortcuts import redirect
+from drf_spectacular.utils import extend_schema
 
 
 class NotificationList(APIView):
+    @extend_schema(
+        tags=['notifications']
+    )
     def get(self, request, *args, **kwargs):
         user = request.user
         notifications = Notification.objects.filter(user=user)
@@ -15,6 +18,9 @@ class NotificationList(APIView):
 
 
 class GetNotificationByCategory(APIView):
+    @extend_schema(
+        tags=['notifications']
+    )
     def get(self, request, *args, **kwargs):
         user = request.user
         category = kwargs.get('category')
