@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification, CommentReplyLike
+from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification, CommentReplyLike, Follow
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.registration.views import RegisterView
 from django.dispatch import receiver
@@ -175,3 +175,11 @@ class ResponseSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.update(validated_data)
         return instance
+    
+class FollowerSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='follower.id')
+    username = serializers.ReadOnlyField(source='follower.username')
+
+    class Meta:
+        model = Follow
+        fields = ['id', 'username']
