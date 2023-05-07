@@ -60,12 +60,12 @@ def follow_user(request, user_id):
 
 
 
-# Decorator indicates that this function can handle HTTP POST requests
 @extend_schema(
-        tags=['followers']
-    )
+    tags=['followers'],
+    request=None,
+    responses={200: ResponseSerializer}
+)
 @api_view(['POST'])
-# Takes the request object and the ID of the user to unfollow as parameters
 def unfollow_user(request, user_id):
     try:
         # Try to retrieve the user to unfollow by ID
@@ -83,7 +83,7 @@ def unfollow_user(request, user_id):
         return Response({"error": "You can't unfollow yourself"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Retrieve the user profile for the current user
-    current_user_profile = UserProfile.objects.get(user=current_user)
+    current_user_profile, created = UserProfile.objects.get_or_create(user=current_user)
 
     # Check if the user to unfollow is in the current user's following list
     if user_to_unfollow not in current_user_profile.following.all():
