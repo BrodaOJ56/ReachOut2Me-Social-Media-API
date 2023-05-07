@@ -66,9 +66,11 @@ class CommentReplySerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender = serializers.ReadOnlyField(source='sender.username')
+
     class Meta:
-        fields = '__all__'
         model = Message
+        fields = ['id', 'sender', 'recipient', 'content', 'image', 'created_at']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

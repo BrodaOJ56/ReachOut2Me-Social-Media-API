@@ -2,7 +2,7 @@ from .endpoints.users import *
 from .endpoints.auth import *
 from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply, CommentReplyLikeView
-from .endpoints.message import MessageList, MessageDetail
+from .endpoints.message import send_message, message_list, message_detail
 from .endpoints.followers import follow_user, unfollow_user,followers_list, following_list
 from .endpoints.notification import NotificationList
 from .serializers import NameRegistrationView
@@ -41,10 +41,12 @@ urlpatterns = [
     # path('logout/', LogoutView.as_view(), name='logout_user'),
     # search for user by username
     path('search/<slug:username>/', SearchUserView.as_view(), name='search_user'),
+    # allow users to view all messages
+    path('messages/', message_list, name='message_list'),
     # allow users to create message and get message
-    path('messages/', MessageList.as_view(), name='message-list'),
+    path('message/', send_message, name='send_message'),
     # allow users to view message by id
-    path('messages/<int:pk>/', MessageDetail.as_view(), name='message-detail'),
+    path('messages/<int:pk>/detail/', message_detail, name='message_detail'),
     # follow user
     path('user/<int:user_id>/follow/', follow_user, name='follow_user'),
     # unfollow user
