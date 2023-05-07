@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from ..models import UserProfile, User, Follow
-from ..serializers import FollowUserSerializer, ResponseSerializer, FollowerSerializer
+from ..serializers import FollowUserSerializer, ResponseSerializer, FollowerSerializer, UserSerializer
 from drf_spectacular.utils import extend_schema
 
 
 # Decorator indicates that this function can handle HTTP POST requests
 @extend_schema(
     tags=['followers'],
-    request=FollowUserSerializer, # Add this line to specify the serializer used for the request data
+    request=None, # Add this line to specify the serializer used for the request data
     responses={ # Add this line to specify the response schema
         status.HTTP_200_OK: ResponseSerializer,
         status.HTTP_400_BAD_REQUEST: ResponseSerializer,
@@ -120,5 +120,31 @@ def followers_list(request, user_id):
     serializer = FollowerSerializer(followers, many=True)
 
     # Return the serialized data as a JSON response
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@extend_schema(
+    tags=['followers'],
+    request=None,
+    responses={200: UserSerializer}
+
+)
+@api_view(['GET'])
+def following_list(request, user_id):
+    try:
+        # Try to retrieve the user by ID
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        # If the user is not found, return a 404 error response
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Retrieve all the users that the given user is following
+    following = UserProfile.objects.filter(following=user).values_list('user', flat=True)
+    # Retrieve the user objects for the users that the given user is following
+    following_users = User.objects.filter(id__in=following)
+
+    # Serialize the list of following users
+    serializer = UserSerializer(following_users, many=True)
+
+    # Return the serialized list of following users as a JSON response
     return Response(serializer.data, status=status.HTTP_200_OK)
 
