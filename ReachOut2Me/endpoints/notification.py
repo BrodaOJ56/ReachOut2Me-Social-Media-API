@@ -6,10 +6,14 @@ from django.shortcuts import redirect
 from drf_spectacular.utils import extend_schema
 
 
-class NotificationList(APIView):
-    @extend_schema(
+
+@extend_schema(
+    request=NotificationSerializer,
+        responses=None ,
         tags=['notifications']
     )
+class NotificationList(APIView):
+    
     def get(self, request, *args, **kwargs):
         user = request.user
         notifications = Notification.objects.filter(user=user)

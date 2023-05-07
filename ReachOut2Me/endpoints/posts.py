@@ -309,10 +309,11 @@ class UpdateDeleteCommentReply(APIView):
         return Response({'message': 'Comment reply deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
-class CommentReplyLikeView(APIView):
-    @extend_schema(
+@extend_schema(request=CommentReplyLikeSerializer,
+        responses={204: None},
         tags=['Comment']
     )
+class CommentReplyLikeView(APIView):
     def post(self, request, comment_reply_id):
         # Get the comment reply object by its ID
         try:
@@ -358,29 +359,32 @@ class CommentReplyLikeView(APIView):
         # Return a success message
         return Response({"message": "You have unliked this comment reply."}, status=status.HTTP_200_OK)
 
-
-# view to like and unlike a post
-class CommentLike(APIView):
-    # the post method is used to like a comment
-    @extend_schema(
-        tags=['Comment']
+    
+@extend_schema(
+        tags=['Comment'],
+        request=None,
+        responses={200: CommentSerializer}
     )
+class CommentLike(APIView):
     def post(self, request, comment_id):
         # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
         # add the user to the likes field of the comment object
         comment.likes.add(request.user)
-        # return a success message
-        return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_200_OK)
+        # serialize the comment object and return the serialized data
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # the delete method is used to unlike a comment
     @extend_schema(
-        tags=['Comment']
+        tags=['Comment'],
+        request=None,
+        responses={200: CommentSerializer}
     )
     def delete(self, request, comment_id):
         # query the Comment model to retrieve a comment object using the comment_id argument
         comment = get_object_or_404(Comment, id=comment_id)
         # remove the user from the likes field of the comment object
         comment.likes.remove(request.user)
-        # return a success message
-        return Response({'message': 'Comment unliked successfully.'}, status=status.HTTP_200_OK)
+        # serialize the comment object and return the serialized data
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
