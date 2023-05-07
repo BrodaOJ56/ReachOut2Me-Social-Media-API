@@ -3,7 +3,7 @@ from .endpoints.auth import *
 from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply, CommentReplyLikeView
 from .endpoints.message import MessageList, MessageDetail
-from .endpoints.followers import follow_user, unfollow_user,followers_list
+from .endpoints.followers import follow_user, unfollow_user,followers_list, following_list
 from .endpoints.notification import NotificationList
 from .serializers import NameRegistrationView
 
@@ -51,6 +51,8 @@ urlpatterns = [
     path('user/<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
     # list followers
     path('users/<int:user_id>/followers/', followers_list, name='followers_list'),
+    # list following
+    path('user/<int:user_id>/following/', following_list, name='following_list'),
     # like and unlike a comment reply
     path('comment-replies/<int:comment_reply_id>/like/', CommentReplyLikeView.as_view(), name='comment_reply_like'),
     # list notifications
