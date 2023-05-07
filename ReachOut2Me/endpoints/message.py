@@ -1,5 +1,8 @@
-from rest_framework import generics
-from ..models import Message, Notification
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from ..models import Message
 from ..serializers import MessageSerializer
 from drf_spectacular.utils import extend_schema
 
@@ -11,19 +14,41 @@ The `perform_create` method is used to save the message object with the authenti
 This ensures that the sender's identity is properly associated with the message object in the database.
 """
 
-
-class MessageList(generics.ListCreateAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-
-    @extend_schema(
+@extend_schema(request=MessageSerializer,
+        responses={200: None},
         tags=['Message']
     )
-    def perform_create(self, serializer):
-        message = serializer.save(sender=self.request.user)
-        Notification.create(user=message.recipient,
-                            content=f'You have a new message from {message.sender.username}',
-                            category='message')
+@api_view(['POST'])
+def send_message(request):
+    """
+    Endpoint for sending a message.
+    """
+    serializer = MessageSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(sender=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@extend_schema(request=None,
+        responses={200: MessageSerializer},
+        tags=['Message']
+    )
+@api_view(['GET'])
+def message_list(request):
+    """
+    Retrieve all messages sent and received by the current user.
+    """
+    # Get the current user
+    user = request.user
+
+    # Get all messages sent and received by the user
+    messages = Message.objects.filter(sender=user) | Message.objects.filter(recipient=user)
+
+    # Serialize the messages
+    serializer = MessageSerializer(messages, many=True)
+
+    # Return the serialized messages as a JSON response
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 """
@@ -32,14 +57,22 @@ The `queryset` attribute determines the list of messages that can be retrieved,
 while the `serializer_class` attribute specifies the serializer responsible for serializing 
 and deserializing message objects. 
 """
-
-
-class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-
-    @extend_schema(
+@permission_classes([IsAuthenticated])
+@extend_schema(request=None,
+        responses={200: MessageSerializer},
         tags=['Message']
     )
-    def perform_create(self, serializer):
-        serializer.save(sender=self.request.user)
+@api_view(['GET'])
+def message_detail(request, message_id):
+    try:
+        message = Message.objects.get(id=message_id)
+    except Message.DoesNotExist:
+        return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Check if the user is either the sender or the recipient of the message
+    if message.sender != request.user and message.recipient != request.user:
+        return Response({"error": "You are not authorized to view this message"}, status=status.HTTP_403_FORBIDDEN)
+    
+    serializer = MessageSerializer(message)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
