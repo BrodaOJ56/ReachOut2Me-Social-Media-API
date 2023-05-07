@@ -141,3 +141,37 @@ class CommentReplyLikeSerializer(serializers.ModelSerializer):
         model = CommentReplyLike
         fields = ['id', 'user', 'comment_reply']
         read_only_fields = ['id']
+
+
+class FollowUserSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+
+    def validate_user_id(self, value):
+        try:
+            user = User.objects.get(id=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with id={} does not exist".format(value))
+        return user
+
+    def create(self, validated_data):
+        user_to_follow = validated_data['user_id']
+        current_user = self.context['request'].user
+        current_user_profile, created = UserProfile.objects.get_or_create(user=current_user)
+        if user_to_follow == current_user:
+            raise serializers.ValidationError("You can't follow yourself")
+        if user_to_follow in current_user_profile.following.all():
+            raise serializers.ValidationError("You are already following this user")
+        current_user_profile.following.add(user_to_follow)
+        current_user_profile.save()
+        return {'success': 'User followed successfully'}
+    
+class ResponseSerializer(serializers.Serializer):
+    success = serializers.BooleanField(default=False)
+    error = serializers.CharField(allow_blank=True, default='')
+
+    def create(self, validated_data):
+        return validated_data
+
+    def update(self, instance, validated_data):
+        instance.update(validated_data)
+        return instance
