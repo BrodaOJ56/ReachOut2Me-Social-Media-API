@@ -183,3 +183,8 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = ['id', 'username']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
