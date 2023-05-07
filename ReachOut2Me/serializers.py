@@ -5,6 +5,7 @@ from dj_rest_auth.registration.views import RegisterView
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.conf import settings
+from drf_spectacular.utils import extend_schema_field
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -46,6 +47,17 @@ class CommentSerializer(serializers.ModelSerializer):
         )
         return comment
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField()
+
+    @extend_schema_field(str)
+    def get_likes(self, obj):
+        return str(obj.likes.count())
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'author', 'post', 'likes']
 
 class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
