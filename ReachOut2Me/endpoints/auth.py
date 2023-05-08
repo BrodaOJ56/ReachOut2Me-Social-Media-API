@@ -1,11 +1,35 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import User, UserProfile
-from ..utils import validate_email, validate_password
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.permissions import AllowAny
+# from ..models import User, UserProfile
+# from ..utils import validate_email, validate_password
+# from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.views import ObtainAuthToken
+# from rest_framework.permissions import AllowAny
+from dj_rest_auth.registration.views import RegisterView
+from ..serializers import NameRegistrationSerializer
+
+
+# This is the view that will be used for the registration
+class NameRegistrationView(RegisterView):
+    serializer_class = NameRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        # Custom response data
+        data = self.get_response_data(user)
+        response_data = {
+            'status': 'success',
+            'message': 'User created successfully',
+            'data': data,
+        }
+
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 #
 # # View to register as a new user

@@ -3,7 +3,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth.models import User
-from ..models import UserProfile, Post
+from ..models import Post
 from rest_framework.authtoken.models import Token
 
 
@@ -15,12 +15,11 @@ class PostTestCase(TestCase):
         """Define the test client and other test variables."""
         self.user = User.objects.create_user(
             username="testuser",
-            password="testpassword",
+            password="testpasswordForUs",
             first_name="testfirstname",
             last_name="testlastname",
             email="test@email.com",
         )
-        UserProfile.objects.create(user=self.user)
         self.token = Token.objects.create(user=self.user)
         Post.objects.create(author=self.user, content="test content")
         self.client = APIClient()

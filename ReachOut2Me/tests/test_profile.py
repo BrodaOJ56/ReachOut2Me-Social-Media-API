@@ -15,12 +15,11 @@ class ProfileTestCase(TestCase):
         """Define the test client and other test variables."""
         self.user = User.objects.create_user(
             username="testuser",
-            password="testpassword",
+            password="testpasswordForMe",
             first_name="testfirstname",
             last_name="testlastname",
             email="test@email.com",
         )
-        UserProfile.objects.create(user=self.user)
         self.token = Token.objects.create(user=self.user)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
