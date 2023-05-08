@@ -5,7 +5,6 @@ from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, C
 from .endpoints.message import send_message, message_list, message_detail
 from .endpoints.followers import follow_user, unfollow_user,followers_list, following_list
 from .endpoints.notification import NotificationList
-from .serializers import NameRegistrationView
 
 urlpatterns = [
     # get all users
