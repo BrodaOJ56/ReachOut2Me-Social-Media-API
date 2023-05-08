@@ -52,71 +52,71 @@ class CommentTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.data)
-        # self.assertEqual(response.data[0]["content"], "test comment")
-        # self.assertEqual(response.data[0]["author"], self.user2.username)
-        # self.assertEqual(response.data[0]["post"], self.post.id)
+        self.assertEqual(response.data[0]["content"], "test comment")
+        self.assertEqual(response.data[0]["author"], self.user2.username)
+        self.assertEqual(response.data[0]["post"], self.post.id)
 
-    # def test_create_comment_on_a_post(self):
-    #     """Test the api can create comment on a post."""
-    #     data = {
-    #         "content": "test comment 2",
-    #         "author": self.user2.username,
-    #         "post": self.post.id
-    #     }
-    #     response = self.client.post(self.url, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(response.data["content"], "test comment 2")
-    #     self.assertEqual(response.data["author"], self.user2.username)
-    #     self.assertEqual(response.data["post"], self.post.id)
-    #
-    # def test_update_a_comment_on_a_post(self):
-    #     """Test the api can update a comment on a post."""
-    #     url = reverse("update-comment", kwargs={"post_id": self.post.id, "comment_id": self.comment.id})
-    #     data = {
-    #         "content": "test comment updated",
-    #         "author": self.user2.username,
-    #         "post": self.post.id
-    #     }
-    #     response = self.client.put(url, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data["content"], "test comment updated")
-    #     self.assertEqual(response.data["author"], self.user2.username)
-    #     self.assertEqual(response.data["post"], self.post.id)
-    #
-    # def test_create_comment_reply(self):
-    #     """Test the api can reply to a comment on a post."""
-    #     url = reverse("create_get_comment_reply",
-    #                   kwargs={"comment_id": self.comment.id})
-    #     data = {
-    #         "comment": self.comment.id,
-    #         "reply": "test comment reply",
-    #         "user": self.user2.id
-    #     }
-    #     response = self.client.post(url, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(response.data["comment"], self.comment.id)
-    #     self.assertEqual(response.data["reply"], "test comment reply")
-    #     self.assertEqual(response.data["user"], self.user2.id)
-    #
-    # def test_update_comment_reply(self):
-    #     """Test the api can update a reply to a comment on a post."""
-    #     url = reverse("update_delete_comment_reply",
-    #                   kwargs={"comment_id": self.comment.id, "reply_id": self.reply.id})
-    #     data = {
-    #         "comment": self.comment.id,
-    #         "reply": "test comment reply updated",
-    #         "user": self.user2.id
-    #     }
-    #     response = self.client.put(url, data, format="json")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data["comment"], self.comment.id)
-    #     self.assertEqual(response.data["reply"], "test comment reply updated")
-    #     self.assertEqual(response.data["user"], self.user2.id)
-    #
-    # def test_delete_comment_reply(self):
-    #     """Test the api can delete a reply to a comment on a post."""
-    #     url = reverse("update_delete_comment_reply",
-    #                   kwargs={"comment_id": self.comment.id, "reply_id": self.reply.id})
-    #     response = self.client.delete(url)
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-    #     self.assertEqual(response.data["message"], "Comment reply deleted successfully.")
+    def test_create_comment_on_a_post(self):
+        """Test the api can create comment on a post."""
+        data = {
+            "content": "test comment 2",
+            "author": self.user2.username,
+            "post": self.post.id
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["content"], "test comment 2")
+        self.assertEqual(response.data["author"], self.user2.username)
+        self.assertEqual(response.data["post"], self.post.id)
+    
+    def test_update_a_comment_on_a_post(self):
+        """Test the api can update a comment on a post."""
+        url = reverse("update-comment", kwargs={"post_id": self.post.id, "comment_id": self.comment.id})
+        data = {
+            "content": "test comment updated",
+            "author": self.user2.username,
+            "post": self.post.id
+        }
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["content"], "test comment updated")
+        self.assertEqual(response.data["author"], self.user2.username)
+        self.assertEqual(response.data["post"], self.post.id)
+    
+    def test_create_comment_reply(self):
+        """Test the api can reply to a comment on a post."""
+        url = reverse("create_get_comment_reply",
+                      kwargs={"comment_id": self.comment.id})
+        data = {
+            "comment": self.comment.id,
+            "reply": "test comment reply",
+            "user": self.user2.id
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["comment"], self.comment.id)
+        self.assertEqual(response.data["reply"], "test comment reply")
+        self.assertEqual(response.data["user"], self.user2.id)
+    
+    def test_update_comment_reply(self):
+        """Test the api can update a reply to a comment on a post."""
+        url = reverse("update_delete_comment_reply",
+                      kwargs={"comment_id": self.comment.id, "reply_id": self.reply.id})
+        data = {
+            "comment": self.comment.id,
+            "reply": "test comment reply updated",
+            "user": self.user2.id
+        }
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["comment"], self.comment.id)
+        self.assertEqual(response.data["reply"], "test comment reply updated")
+        self.assertEqual(response.data["user"], self.user2.id)
+    
+    def test_delete_comment_reply(self):
+        """Test the api can delete a reply to a comment on a post."""
+        url = reverse("update_delete_comment_reply",
+                      kwargs={"comment_id": self.comment.id, "reply_id": self.reply.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data["message"], "Comment reply deleted successfully.")
