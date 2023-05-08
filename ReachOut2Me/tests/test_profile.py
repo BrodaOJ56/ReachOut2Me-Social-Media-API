@@ -39,20 +39,20 @@ class ProfileTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["first_name"], "testfirstname")
 
-    # def test_update_user_profile(self):
-    #     """Test the api can update user profile."""
-    #     response = self.client.put(
-    #         self.url,
-    #         data={
-    #             "bio": "test bio",
-    #             "country": "france",
-    #         },
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data["bio"], "test bio")
-    #     self.assertEqual(response.data["country"], "france")
-    #     self.assertEqual(response.data["user"], self.user.id)
-    #
+    def test_update_user_profile(self):
+        """Test the api can update user profile."""
+        response = self.client.put(
+            self.url,
+            data={
+                "bio": "test bio",
+                "country": "france",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["bio"], "test bio")
+        self.assertEqual(response.data["country"], "france")
+        self.assertEqual(response.data["user"], self.user.id)
+
     # def test_get_user_account(self):
     #     """Test the api can get user account."""
     #     response = self.client.get(reverse("get_user_profile"))
