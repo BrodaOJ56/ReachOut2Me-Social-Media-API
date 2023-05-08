@@ -20,43 +20,30 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    # set the author field to a string representation of the author
+    likes = serializers.SerializerMethodField()
     author = serializers.StringRelatedField()
-    # set the required for the image fields to False
-    # the use_url=True means that the image will be returned as a URL
     image = serializers.ImageField(required=False, use_url=True)
+    content = serializers.CharField()
 
     class Meta:
-        fields = '__all__'
         model = Comment
+        fields = ['id', 'author', 'post', 'image','content', 'likes']
 
-    # override the create method to allow the creation of a comment with an image
     def create(self, validated_data):
-        # get the request from the context
         request = self.context.get('request')
-        # get the image from the request
         image = request.FILES.get('image')
-        validated_data.pop('image', None)  # remove the 'image' key from validated_data
-        # create the comment
+        validated_data.pop('image', None)
         comment = Comment.objects.create(
             author=request.user,
-            # set the image to the image from the request if it exists and None otherwise
             image=image if image else None,
             **validated_data
         )
         return comment
 
-
-class CommentSerializer(serializers.ModelSerializer):
-    likes = serializers.SerializerMethodField()
-
     @extend_schema_field(str)
     def get_likes(self, obj):
         return str(obj.likes.count())
 
-    class Meta:
-        model = Comment
-        fields = ['id', 'author', 'post', 'likes']
 
 
 class CommentReplySerializer(serializers.ModelSerializer):
