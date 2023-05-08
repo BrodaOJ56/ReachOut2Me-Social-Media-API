@@ -53,8 +53,8 @@ class ProfileTestCase(TestCase):
         self.assertEqual(response.data["country"], "france")
         self.assertEqual(response.data["user"], self.user.id)
 
-    # def test_get_user_account(self):
-    #     """Test the api can get user account."""
-    #     response = self.client.get(reverse("get_user_profile"))
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data["username"], "testuser")
+    def test_get_user_account(self):
+        """Test the api can get user account."""
+        response = self.client.get(reverse("get_user_profile"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "testuser")
