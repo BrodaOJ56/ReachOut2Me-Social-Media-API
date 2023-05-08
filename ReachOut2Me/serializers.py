@@ -1,7 +1,6 @@
 from rest_framework import serializers, viewsets
 from .models import Post, Comment, Message, UserProfile, User, CommentReply, Notification, CommentReplyLike, Follow
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from dj_rest_auth.registration.views import RegisterView
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.conf import settings
@@ -58,6 +57,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'author', 'post', 'likes']
+
 
 class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
@@ -131,10 +131,6 @@ def create_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
 
 
-class NameRegistrationView(RegisterView):
-    serializer_class = NameRegistrationSerializer
-
-
 class CommentReplyLikeSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     comment_reply = serializers.PrimaryKeyRelatedField(queryset=CommentReply.objects.all())
@@ -166,7 +162,8 @@ class FollowUserSerializer(serializers.Serializer):
         current_user_profile.following.add(user_to_follow)
         current_user_profile.save()
         return {'success': 'User followed successfully'}
-    
+
+
 class ResponseSerializer(serializers.Serializer):
     success = serializers.BooleanField(default=False)
     error = serializers.CharField(allow_blank=True, default='')
@@ -177,7 +174,8 @@ class ResponseSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.update(validated_data)
         return instance
-    
+
+
 class FollowerSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='follower.id')
     username = serializers.ReadOnlyField(source='follower.username')
@@ -185,6 +183,7 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = ['id', 'username']
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
