@@ -30,13 +30,15 @@ class UserTestCase(TestCase):
 
     def test_register_user(self):
         """Test the api can register users"""
-        url = reverse("register_user")
+        url = reverse("rest_name_register")
         data = {
-            "username": "registerme",
-            "password": "Testpassword1",
-            "first_name": "testfirstname",
-            "last_name": "testlastname",
-            "email": "registerme@email.com",
+              "username": "string001",
+              "email": "user@example.com",
+              "password1": "Manchester100",
+              "password2": "Manchester100",
+              "first_name": "stringy",
+              "last_name": "string"
         }
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 2)
