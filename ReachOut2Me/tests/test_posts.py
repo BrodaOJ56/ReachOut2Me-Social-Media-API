@@ -31,32 +31,32 @@ class PostTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-#     def test_create_post(self):
-#         """Test the api can create a post."""
-#         response = self.client.post(self.url, data={"content": "test content"})
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-#         self.assertEqual(response.data["content"], "test content")
-#         self.assertEqual(response.data["author"], self.user.username)
-#
-#     def test_get_a_post_by_id(self):
-#         """Test the api can get a post by id."""
-#         url = reverse("post_detail", kwargs={"pk": 1})
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data["content"], "test content")
-#         self.assertEqual(response.data["author"], self.user.username)
-#
-#     def test_delete_a_post_by_id(self):
-#         """Test the api can delete a post by id."""
-#         url = reverse("post_detail", kwargs={"pk": 1})
-#         response = self.client.delete(url)
-#         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-#         self.assertEqual(Post.objects.count(), 0)
-#
-#     def test_update_a_post_by_id(self):
-#         """Test the api can update a post by id"""
-#         url = reverse("post_detail", kwargs={"pk": 1})
-#         response = self.client.put(url, data={"content": "test content updated"})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data["content"], "test content updated")
-#         self.assertEqual(response.data["author"], self.user.username)
+    def test_create_post(self):
+        """Test the api can create a post."""
+        response = self.client.post(self.url, data={"content": "test content"})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["content"], "test content")
+        self.assertEqual(response.data["author"], self.user.username)
+
+    def test_get_a_post_by_id(self):
+        """Test the api can get a post by id."""
+        url = reverse("post_detail", kwargs={"pk": 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["content"], "test content")
+        self.assertEqual(response.data["author"], self.user.username)
+
+    def test_delete_a_post_by_id(self):
+        """Test the api can delete a post by id."""
+        url = reverse("post_detail", kwargs={"pk": 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Post.objects.count(), 0)
+
+    def test_update_a_post_by_id(self):
+        """Test the api can update a post by id"""
+        url = reverse("post_detail", kwargs={"pk": 1})
+        response = self.client.put(url, data={"content": "test content updated"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["content"], "test content updated")
+        self.assertEqual(response.data["author"], self.user.username)
