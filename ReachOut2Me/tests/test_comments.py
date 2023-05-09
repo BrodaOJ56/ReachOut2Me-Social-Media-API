@@ -51,7 +51,6 @@ class CommentTestCase(TestCase):
         """Test the api can get comment on a post."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print(response.data)
         self.assertEqual(response.data[0]["content"], "test comment")
         self.assertEqual(response.data[0]["author"], self.user2.username)
         self.assertEqual(response.data[0]["post"], self.post.id)
