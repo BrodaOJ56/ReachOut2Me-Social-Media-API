@@ -4,7 +4,7 @@ from django.urls import path
 from .endpoints.posts import PostListCreateView, PostDetailView, PostLikeView, CreateGetComment, UpdateDeleteComment, CommentLike, UpdateDeleteCommentReply, ListCreateCommentReply, CommentReplyLikeView
 from .endpoints.message import send_message, message_list, message_detail
 from .endpoints.followers import follow_user, unfollow_user,followers_list, following_list
-from .endpoints.notification import NotificationList
+from .endpoints.notification import list_notifications, delete_notification
 
 urlpatterns = [
     # get all users
@@ -57,7 +57,10 @@ urlpatterns = [
     # like and unlike a comment reply
     path('comment-replies/<int:comment_reply_id>/like/', CommentReplyLikeView.as_view(), name='comment_reply_like'),
     # list notifications
-    path('notifications/', NotificationList.as_view(), name='notification_list'),
+    path('notifications/', list_notifications, name='notification_list'),
+    # delete notifications
+    path('notifications/<int:pk>/delete/', delete_notification, name='notification_delete'),
+
     path('dj-rest-auth/registration/', NameRegistrationView.as_view(), name="rest_name_register")
 
 ]
