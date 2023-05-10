@@ -96,10 +96,21 @@ class UserProfile_Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class NotificationSerializer(serializers.ModelSerializer):
+    actor_object_id = serializers.IntegerField(read_only=True)
+    actor_content_type = serializers.SerializerMethodField()
+    actor_object = serializers.SerializerMethodField()
+
     class Meta:
         model = Notification
-        fields = '__all__'
+        fields = ('id', 'recipient', 'actor_object_id', 'actor_content_type', 'actor_object', 'verb', 'read', 'timestamp')
+
+    def get_actor_content_type(self, obj):
+        return obj.actor_content_type.model
+
+    def get_actor_object(self, obj):
+        return obj.actor_object.__str__()
 
 
 class NameRegistrationSerializer(RegisterSerializer):
