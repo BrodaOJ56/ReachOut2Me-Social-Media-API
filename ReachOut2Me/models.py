@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db import models
+from django.utils import timezone
+from django.urls import reverse
+from django.conf import settings
 
 
 class Post(models.Model):
@@ -124,24 +130,124 @@ class Follow(models.Model):
 
 
 class Notification(models.Model):
-    # the user who the notification is for
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # the content of the notification
-    content = models.TextField()
-    # whether the notification has been read or not
+    NOTIFICATION_TYPES = (
+        ("follow", "Follow"),
+        ("message", "Message"),
+        ("post_like", "Post Like"),
+        ("comment", "Comment"),
+        ("comment_like", "Comment Like"),
+        ("reply", "Reply"),
+        ("reply_like", "Reply"),
+    )
+
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    actor_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="notify_actor", null=True, blank=True)
+    actor_object_id = models.PositiveIntegerField(default=0)
+    actor_object = GenericForeignKey('actor_content_type', 'actor_object_id')
+    verb = models.CharField(max_length=255, choices=NOTIFICATION_TYPES, default='follow')
     read = models.BooleanField(default=False)
-    # the time the notification was created
-    created_at = models.DateTimeField(auto_now_add=True)
-    category = models.CharField(max_length=30, null=True)
-
-    class Meta:
-        app_label = 'ReachOut2Me'
-
-    @classmethod
-    def create(cls, user, content, category):
-        notification = cls(user=user, content=content, category=category)
-        notification.save()
-        return notification
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.content
+        return f"{self.recipient.username} {self.verb}"
+
+    def get_absolute_url(self):
+        if self.verb == "follow":
+            return reverse("user_detail", kwargs={"username": self.actor_object.username})
+        elif self.verb == "message":
+            return reverse("messages")
+        elif self.verb == "post_like":
+            return reverse("post_detail", kwargs={"pk": self.actor_object.pk})
+        elif self.verb == "comment_like":
+            return reverse("comment_detail", kwargs={"pk": self.actor_object.pk})
+        elif self.verb == "comment":
+            return reverse("post_detail", kwargs={"pk": self.actor_object.post.pk})
+        elif self.verb == "reply":
+            return reverse("post_detail", kwargs={"pk": self.actor_object.post.pk})
+        elif self.verb == "reply_like":
+            return reverse("comment_detail", kwargs={"pk": self.actor_object.parent_comment.pk})
+
+            
+    @classmethod
+    def create_message_notification(cls, recipient, message):
+        actor_content_type = ContentType.objects.get_for_model(message.sender)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=message.sender.id,
+            verb='message'
+        )
+        return notification
+    
+    @classmethod
+    def create_follow_notification(cls, recipient, actor):
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=actor.id,
+            verb='follow'
+        )
+        return notification
+    
+    @classmethod
+    def create_post_like_notification(cls, recipient, post, actor):
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=actor.id,
+            verb='post_like',
+            actor_object=post
+        )
+        return notification
+    
+    @classmethod
+    def create_comment_notification(cls, recipient, comment, actor):
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=actor.id,
+            verb='comment',
+            actor_object=comment
+        )
+        return notification
+    
+    @classmethod
+    def create_comment_like_notification(cls, recipient, comment, actor):
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=actor.id,
+            verb='comment_like',
+            actor_object=comment
+        )
+        return notification
+    
+    @classmethod
+    def create_reply_notification(cls, recipient, reply, actor):
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=actor.id,
+            verb='reply',
+            actor_object=reply.comment
+        )
+        return notification
+    
+    @classmethod
+    def reply_like_notification(cls, recipient, reply_like):
+        actor_content_type = ContentType.objects.get_for_model(reply_like.user)
+        notification = cls.objects.create(
+            recipient=recipient,
+            actor_content_type=actor_content_type,
+            actor_object_id=reply_like.user.id,
+            verb='reply_like',
+            actor_object=reply_like
+        )
+        return notification
+    
+
