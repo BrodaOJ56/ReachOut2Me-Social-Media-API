@@ -1,10 +1,11 @@
 from rest_framework import generics, status
-from ..models import Post, Comment, CommentReply, CommentReplyLike
+from ..models import Post, Comment, CommentReply, CommentReplyLike, Notification
 from rest_framework.response import Response
 from ..serializers import PostSerializer, CommentSerializer, CommentReplySerializer, CommentReplyLikeSerializer
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
+from django.contrib.contenttypes.models import ContentType
 
 @extend_schema(
         tags=['Post']
@@ -90,6 +91,18 @@ class PostLikeView(generics.GenericAPIView):
             post.likes.add(user)
             # the message variable is used to send a message to the user
             message = 'Liked post successfully'
+
+            # Create notification for post creator
+            recipient = post.author
+            actor = user
+            notification_type = 'post_like'
+            notification = Notification.objects.create(
+                recipient=recipient,
+                actor_content_type=ContentType.objects.get_for_model(actor),
+                actor_object_id=actor.id,
+                verb=notification_type,
+                actor_object=post
+            )
         # the save method is used to save the changes to the post object
         post.save()
         # the get_serializer method is used to serialize the post object
@@ -124,6 +137,16 @@ class CreateGetComment(APIView):
         # if the data is valid, the save method is used to save the comment object
         if serializer.is_valid():
             serializer.save(post=post)
+
+                # create a notification object for the post owner
+            recipient = post.author
+            actor = request.user
+            verb = 'comment'
+            Notification.objects.create(recipient=recipient, 
+                                        actor_object=post,
+                                        verb=verb, 
+                                        actor_content_type=ContentType.objects.get_for_model(actor))
+
             # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # if the data is not valid, the errors are returned with a 400 Bad Request status code
@@ -220,6 +243,17 @@ class ListCreateCommentReply(APIView):
         # if the data is valid, the save method is used to save the comment reply object
         if serializer.is_valid():
             serializer.save(comment=comment, user=request.user)
+
+            # create a notification object for the recipient
+            recipient = comment.user
+            actor = request.user
+            verb = "reply"
+            actor_content_type = ContentType.objects.get_for_model(actor)
+            notification = Notification.objects.create(recipient=recipient,
+                                                        actor_content_type=actor_content_type, 
+                                                        actor_object_id=actor.id, 
+                                                    verb=verb, 
+                                                    actor_object=comment.post)
             # the Response method is used to send a response to the user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # if the data is not valid, the errors are returned with a 400 Bad Request status code
