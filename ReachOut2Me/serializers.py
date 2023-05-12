@@ -34,7 +34,7 @@ class CommentSerializer(serializers.ModelSerializer):
         image = request.FILES.get('image')
         validated_data.pop('image', None)
         comment = Comment.objects.create(
-            author=request.user,
+            user=request.user,
             image=image if image else None,
             **validated_data
         )
