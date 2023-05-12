@@ -96,7 +96,7 @@ class PostLikeView(generics.GenericAPIView):
             recipient = post.author
             actor = user
             notification_type = 'post_like'
-            notification = Notification.objects.create(
+            Notification.objects.create(
                 recipient=recipient,
                 actor_content_type=ContentType.objects.get_for_model(actor),
                 actor_object_id=actor.id,
@@ -249,7 +249,7 @@ class ListCreateCommentReply(APIView):
             actor = request.user
             verb = "reply"
             actor_content_type = ContentType.objects.get_for_model(actor)
-            notification = Notification.objects.create(recipient=recipient,
+            Notification.objects.create(recipient=recipient,
                                                         actor_content_type=actor_content_type, 
                                                         actor_object_id=actor.id, 
                                                     verb=verb, 
@@ -351,6 +351,28 @@ class CommentReplyLikeView(APIView):
         # Create a new comment reply like object for the current user and the given comment reply
         comment_reply_like, created = CommentReplyLike.objects.get_or_create(
             comment_reply=comment_reply, user=request.user)
+        
+        # Serialize and return the comment reply like object
+        serializer = CommentReplyLikeSerializer(comment_reply_like)
+
+        # Get the recipient user
+        recipient = comment_reply.user
+
+        # Get the actor user
+        actor = request.user
+
+        # Create the notification object
+        notification = Notification(
+            recipient=recipient,
+            actor_object_id=actor.id,
+            actor_content_type=ContentType.objects.get_for_model(actor),
+            verb='liked your comment reply',
+            actor_object=comment_reply,
+        )
+
+        # Save the notification object to the database
+        notification.save()
+
 
         # If the comment reply like object was not created (meaning the user has already liked the comment reply), return a 400 error
         if not created:
@@ -359,6 +381,7 @@ class CommentReplyLikeView(APIView):
         # Serialize and return the comment reply like object
         serializer = CommentReplyLikeSerializer(comment_reply_like)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
     def delete(self, request, comment_reply_id):
         # Get the comment reply object by its ID
