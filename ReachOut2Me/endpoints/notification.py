@@ -34,11 +34,10 @@ def list_notifications(request):
     },
     tags=['notification']
 )
-@api_view(['POST'])
+@api_view(['DELETE'])
 @login_required
-
-def delete_notification(request, notification_id):
-    notification = get_object_or_404(Notification, id=notification_id)
+def delete_notification(request, pk):
+    notification = get_object_or_404(Notification, id=pk)
     if notification.recipient != request.user:
         return JsonResponse({'status': 'error', 'message': 'You are not authorized to delete this notification.'}, status=403)
     notification.delete()
