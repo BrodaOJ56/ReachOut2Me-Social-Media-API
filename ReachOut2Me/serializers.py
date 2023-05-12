@@ -8,8 +8,8 @@ from drf_spectacular.utils import extend_schema_field
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # set the author field to a required field
-    author = serializers.CharField(required=False)
+    # set the user field to a required field
+    user = serializers.CharField(required=False)
 
     # define the fields that will be serialized/deserialized
     class Meta:
@@ -21,13 +21,13 @@ class PostSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
-    author = serializers.StringRelatedField()
+    user = serializers.StringRelatedField()
     image = serializers.ImageField(required=False, use_url=True)
     content = serializers.CharField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'post', 'image','content', 'likes']
+        fields = ['id', 'user', 'post', 'image','content', 'likes']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -48,8 +48,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
         model = CommentReply
+        fields = ['id', 'comment', 'user', 'reply', 'created_at']
 
 
 class MessageSerializer(serializers.ModelSerializer):
