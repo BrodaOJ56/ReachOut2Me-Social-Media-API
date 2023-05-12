@@ -106,10 +106,10 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ('id', 'recipient', 'actor_object_id', 'actor_content_type', 'actor_object', 'verb', 'read', 'timestamp')
 
-    def get_actor_content_type(self, obj):
+    def get_actor_content_type(self, obj) -> str:
         return obj.actor_content_type.model
 
-    def get_actor_object(self, obj):
+    def get_actor_object(self, obj) -> str:
         return obj.actor_object.__str__()
 
 
