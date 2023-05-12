@@ -14,7 +14,7 @@ class Post(models.Model):
     # the image of the post
     image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     # the user who wrote the post
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     # the time the post was created
     created_at = models.DateTimeField(auto_now_add=True)
     # the time the post was last updated
@@ -26,7 +26,7 @@ class Post(models.Model):
         app_label = 'ReachOut2Me'
 
     def __str__(self):
-        return f"{self.author.username}'s post: {self.content}"
+        return f"{self.user.username}'s post: {self.content}"
 
 
 class Comment(models.Model):
@@ -34,7 +34,7 @@ class Comment(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='comment_images/', null=True, blank=True)
     # the user who wrote the comment
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     # the post that the comment is on
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     # Allow users to like a comment
