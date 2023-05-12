@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.contenttypes.models import ContentType
 
-from ..models import UserProfile, User, Follow
+from ..models import UserProfile, User, Follow, Notification
 from ..serializers import FollowUserSerializer, ResponseSerializer, FollowerSerializer, UserSerializer
 from drf_spectacular.utils import extend_schema
 
@@ -55,6 +56,15 @@ def follow_user(request, user_id):
     current_user_profile.following.add(user_to_follow)
     # Save the user profile
     current_user_profile.save()
+    # Create the notification object
+    notification = Notification(
+        recipient=user_to_follow,  # User who will receive the notification
+        actor_object_id=current_user.id,  # ID of the user who performed the action (following)
+        actor_content_type=ContentType.objects.get_for_model(current_user),  # Content type of the actor object (user)
+        verb='started following you',  # Notification message
+        actor_object=current_user,  # Actor object (user who performed the action)
+    )
+    notification.save()
     # Return a success response
     return Response({"success": "User followed successfully"}, status=status.HTTP_200_OK)
 
