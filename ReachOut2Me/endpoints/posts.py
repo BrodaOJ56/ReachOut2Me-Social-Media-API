@@ -93,7 +93,7 @@ class PostLikeView(generics.GenericAPIView):
             message = 'Liked post successfully'
 
             # Create notification for post creator
-            recipient = post.author
+            recipient = post.user
             actor = user
             notification_type = 'post_like'
             Notification.objects.create(
