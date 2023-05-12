@@ -139,7 +139,7 @@ class CreateGetComment(APIView):
             serializer.save(post=post)
 
                 # create a notification object for the post owner
-            recipient = post.author
+            recipient = post.user
             actor = request.user
             verb = 'comment'
             Notification.objects.create(recipient=recipient, 
@@ -417,6 +417,18 @@ class CommentLike(APIView):
         comment = get_object_or_404(Comment, id=comment_id)
         # add the user to the likes field of the comment object
         comment.likes.add(request.user)
+        # Create the notification object
+        recipient = comment.user
+        actor = request.user
+        verb = 'liked your comment'
+        actor_content_type = ContentType.objects.get_for_model(actor)
+        Notification.objects.create(
+            recipient=recipient,
+            actor_object_id=actor.id,
+            actor_content_type=actor_content_type,
+            verb=verb,
+            actor_object=comment,
+        )
         # serialize the comment object and return the serialized data
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_200_OK)
