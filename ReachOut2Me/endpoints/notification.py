@@ -7,35 +7,37 @@ from rest_framework.decorators import api_view
 from ..models import Notification
 from ..serializers import NotificationSerializer
 
-@api_view(['GET'])
-@login_required
+
 @extend_schema(
     description='Get a list of notifications for the authenticated user.',
+    request=None,
     responses={
         200: NotificationSerializer(many=True),
-        401: 'Unauthorized',
     },
+    tags=['notification']
 )
+@api_view(['GET'])
+@login_required
+
 def list_notifications(request):
-    print('list_notifications view called')
     notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
     Notification.objects.filter(recipient=request.user, read=False).update(read=True)
     serializer = NotificationSerializer(notifications, many=True)
     return JsonResponse(serializer.data, safe=False)
 
-@api_view(['POST'])
-@login_required
+
 @extend_schema(
     description='Delete a notification for the authenticated user.',
+    request=None,
     responses={
         200: {'status': 'ok'},
-        401: 'Unauthorized',
-        404: 'Not Found',
-        403: 'Forbidden',
     },
+    tags=['notification']
 )
+@api_view(['POST'])
+@login_required
+
 def delete_notification(request, notification_id):
-    print('delete_notification view called')
     notification = get_object_or_404(Notification, id=notification_id)
     if notification.recipient != request.user:
         return JsonResponse({'status': 'error', 'message': 'You are not authorized to delete this notification.'}, status=403)
